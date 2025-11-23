@@ -1,5 +1,5 @@
 {
-  buildGoModule,
+  buildGoApplication,
   coreutils,
   fetchFromGitHub,
   git,
@@ -12,7 +12,7 @@
   yamllint,
 }:
 
-buildGoModule rec {
+buildGoApplication rec {
   pname = "chart-releaser";
   version = "1.8.1";
 
@@ -23,8 +23,7 @@ buildGoModule rec {
     hash = "sha256-h1czHb/xK+kOEK4TJhMnwnLeVmQm52C8dTUy+fahJ90=";
   };
 
-  # vendorHash = "sha256-29rGyStJsnhJiO01DIFf/ROaYsXGg3YRJatdzC6A7JU=";
-  vendorHash = null;
+  modules = ./gomod2nix.toml;
 
   postPatch = ''
     substituteInPlace pkg/config/config.go \

@@ -20,14 +20,33 @@
         "x86_64-darwin"
         "aarch64-darwin"
       ];
-      imports = [ inputs.treefmt-nix.flakeModule ];
+      imports = [
+        inputs.treefmt-nix.flakeModule
+        # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
+        inputs.flake-parts.flakeModules.easyOverlay
+      ];
       perSystem =
-        { pkgs, ... }:
         {
-          packages.chart-releaser = pkgs.callPackage ./pkgs/chart-releaser { };
+          config,
+          pkgs,
+          system,
+          final,
+          ...
+        }:
+        {
+          overlayAttrs = {
+            inherit (config.packages) chart-releaser gomod2nix;
+          };
+
+          packages.chart-releaser = pkgs.callPackage ./pkgs/chart-releaser {
+            inherit (inputs.gomod2nix.legacyPackages.${system}) buildGoApplication;
+          };
+
+          packages.gomod2nix = inputs.gomod2nix.packages.${system}.default;
 
           devShells.default = pkgs.mkShellNoCC {
             nativeBuildInputs = with pkgs; [
+              final.gomod2nix
               nil
               nixd
               nixfmt-rfc-style
@@ -36,6 +55,7 @@
           };
 
           treefmt = {
+            projectRootFile = "flake.nix";
             programs.nixfmt.enable = true;
           };
         };
