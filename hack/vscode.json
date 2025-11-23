@@ -7,7 +7,7 @@
             "formatting": {
                 "command": [
                     "nixfmt"
-                ],
+                ]
             }
         }
     }
