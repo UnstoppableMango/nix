@@ -23,7 +23,8 @@ buildGoApplication rec {
     hash = "sha256-h1czHb/xK+kOEK4TJhMnwnLeVmQm52C8dTUy+fahJ90=";
   };
 
-  modules = ./gomod2nix.toml;
+  # TODO
+  # modules = ./gomod2nix.toml;
 
   postPatch = ''
     substituteInPlace pkg/config/config.go \

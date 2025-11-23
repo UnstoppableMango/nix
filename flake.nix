@@ -35,13 +35,13 @@
         }:
         {
           overlayAttrs = {
-            inherit (config.packages) chart-releaser gomod2nix;
+            inherit (config.packages) gomod2nix;
           };
 
           # TODO: This is broken
-          packages.chart-releaser = pkgs.callPackage ./pkgs/chart-releaser {
-            inherit (inputs.gomod2nix.legacyPackages.${system}) buildGoApplication;
-          };
+          # packages.chart-releaser = pkgs.callPackage ./pkgs/chart-releaser {
+          #   inherit (inputs.gomod2nix.legacyPackages.${system}) buildGoApplication;
+          # };
 
           packages.gomod2nix = inputs.gomod2nix.packages.${system}.default;
 
