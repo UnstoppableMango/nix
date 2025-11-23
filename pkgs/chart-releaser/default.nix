@@ -20,49 +20,47 @@ buildGoModule rec {
     owner = "helm";
     repo = "chart-releaser";
     rev = "v${version}";
-    hash = "sha256-wdUUo19bFf3ov+Rd+JV6CtbH9TWGC73lWRrNLOfNGR8=";
+    hash = "sha256-h1czHb/xK+kOEK4TJhMnwnLeVmQm52C8dTUy+fahJ90=";
   };
 
-  vendorHash = "sha256-29rGyStJsnhJiO01DIFf/ROaYsXGg3YRJatdzC6A7JU=";
+  # vendorHash = "sha256-29rGyStJsnhJiO01DIFf/ROaYsXGg3YRJatdzC6A7JU=";
+  vendorHash = null;
 
-  # postPatch = ''
-  #   substituteInPlace pkg/config/config.go \
-  #     --replace "\"/etc/ct\"," "\"$out/etc/ct\","
-  # '';
+  postPatch = ''
+    substituteInPlace pkg/config/config.go \
+      --replace "\"/etc/cr\"," "\"$out/etc/cr\","
+  '';
 
-  # ldflags = [
-  #   "-w"
-  #   "-s"
-  #   "-X github.com/helm/chart-testing/v3/ct/cmd.Version=${version}"
-  #   "-X github.com/helm/chart-testing/v3/ct/cmd.GitCommit=${src.rev}"
-  #   "-X github.com/helm/chart-testing/v3/ct/cmd.BuildDate=19700101-00:00:00"
-  # ];
+  ldflags = [
+    "-w"
+    "-s"
+    "-X github.com/helm/chart-releaser/cr/cmd.Version=${version}"
+    "-X github.com/helm/chart-releaser/cr/cmd.GitCommit=${src.rev}"
+    "-X github.com/helm/chart-releaser/cr/cmd.BuildDate=19700101-00:00:00"
+  ];
 
-  # nativeBuildInputs = [
-  #   installShellFiles
-  #   makeWrapper
-  # ];
+  nativeBuildInputs = [
+    installShellFiles
+    makeWrapper
+  ];
 
-  # postInstall = ''
-  #   install -Dm644 -t $out/etc/ct etc/chart_schema.yaml
-  #   install -Dm644 -t $out/etc/ct etc/lintconf.yaml
+  postInstall = ''
+    installShellCompletion --cmd cr \
+      --bash <($out/bin/cr completion bash) \
+      --zsh <($out/bin/cr completion zsh) \
+      --fish <($out/bin/cr completion fish) \
 
-  #   installShellCompletion --cmd ct \
-  #     --bash <($out/bin/ct completion bash) \
-  #     --zsh <($out/bin/ct completion zsh) \
-  #     --fish <($out/bin/ct completion fish) \
-
-  #   wrapProgram $out/bin/ct --prefix PATH : ${
-  #     lib.makeBinPath [
-  #       coreutils
-  #       git
-  #       kubectl
-  #       kubernetes-helm
-  #       yamale
-  #       yamllint
-  #     ]
-  #   }
-  # '';
+    wrapProgram $out/bin/cr --prefix PATH : ${
+      lib.makeBinPath [
+        coreutils
+        git
+        kubectl
+        kubernetes-helm
+        yamale
+        yamllint
+      ]
+    }
+  '';
 
   meta = with lib; {
     description = "Hosting Helm Charts via GitHub Pages and Releases";
