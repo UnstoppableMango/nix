@@ -8,6 +8,14 @@ check:
 
 build: ${PACKAGES}
 
+deps: packages/aspire-cli/deps.json
+
+packages/aspire-cli/deps.json: bin/aspire-cli-deps.sh
+	$< $@
+
+bin/aspire-cli-deps.sh:
+	$(NIX) build .#aspire-cli.fetch-deps --out-link $@
+
 ${PACKAGES}: %: packages/%/gomod2nix.toml
 	$(NIX) build .#$*
 
