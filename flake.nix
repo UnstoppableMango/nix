@@ -3,6 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    systems.url = "github:nix-systems/default";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
 
@@ -26,8 +27,12 @@
     inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
+
       imports = [
+
         inputs.treefmt-nix.flakeModule
+        ./packages/aspire-cli
+
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
 
@@ -58,7 +63,6 @@
             packages = with pkgs; [
               gomod2nix
               nil
-              nixd
               nixfmt-rfc-style
               nurl
             ];
