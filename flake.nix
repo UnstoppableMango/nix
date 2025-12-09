@@ -6,6 +6,8 @@
     systems.url = "github:nix-systems/default";
     flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
+    gomod2nix.url = "github:nix-community/gomod2nix?ref=v1.7.0";
+    gomod2nix.inputs.nixpkgs.follows = "nixpkgs";
 
     gomod2nix = {
       url = "github:nix-community/gomod2nix";
@@ -29,7 +31,6 @@
       systems = import inputs.systems;
 
       imports = [
-
         inputs.treefmt-nix.flakeModule
 
         ./packages/aspire-cli
@@ -41,7 +42,7 @@
       ];
 
       perSystem =
-        {
+        { self',
           pkgs,
           system,
           config,
@@ -66,6 +67,7 @@
             meta.description = "Convert applications using Go modules to Nix expressions";
           };
 
+          packages.default = self'.packages.aspire-cli;
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
               gomod2nix
