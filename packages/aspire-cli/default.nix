@@ -38,6 +38,7 @@
 
       apps.aspire-cli = {
         type = "app";
+        meta.description = "A CLI tool for managing Aspire projects";
         program = "${aspire-cli}/bin/aspire";
       };
     };

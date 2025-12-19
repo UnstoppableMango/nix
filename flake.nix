@@ -54,6 +54,7 @@
 
           apps.gomod2nix = {
             type = "app";
+            meta.description = "Convert go.mod/go.sum to Nix packages";
             program = "${pkgs.gomod2nix}/bin/gomod2nix";
           };
 
