@@ -29,17 +29,16 @@
 
       imports = [
         inputs.treefmt-nix.flakeModule
-        ./packages/aspire-cli
-        ./packages/chart-releaser
-
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
 
+        ./packages/aspire-cli
         ./packages/chart-releaser
       ];
 
       perSystem =
-        { self',
+        {
+          self',
           pkgs,
           system,
           ...
@@ -58,7 +57,6 @@
             program = "${pkgs.gomod2nix}/bin/gomod2nix";
           };
 
-          packages.default = self'.packages.aspire-cli;
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
               gomod2nix

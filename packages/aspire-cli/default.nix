@@ -1,16 +1,12 @@
-let
-  version = "13.0.2";
-in
 {
   perSystem =
     { pkgs, ... }:
     let
       dotnet = pkgs.dotnetCorePackages.sdk_10_0_1xx;
-    in
-    {
-      packages.aspire-cli = pkgs.buildDotnetModule {
+
+      aspire-cli = pkgs.buildDotnetModule rec {
         pname = "aspire-cli";
-        inherit version;
+        version = "13.0.2";
 
         nativeBuildInputs = with pkgs; [
           gcc
@@ -35,6 +31,14 @@ in
           license = licenses.mit;
           mainProgram = "aspire";
         };
+      };
+    in
+    {
+      packages = { inherit aspire-cli; };
+
+      apps.aspire-cli = {
+        type = "app";
+        program = "${aspire-cli}/bin/aspire";
       };
     };
 }
