@@ -30,31 +30,30 @@
         inputs.treefmt-nix.flakeModule
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
+
+        ./pkgs/chart-releaser
       ];
 
       perSystem =
         {
-          config,
           pkgs,
           system,
-          final,
           ...
         }:
         {
-          overlayAttrs = {
-            inherit (config.packages) gomod2nix;
+          _module.args.pkgs = import inputs.nixpkgs {
+            inherit system;
+            overlays = [ inputs.gomod2nix.overlays.default ];
           };
 
-          # TODO: This is broken
-          # packages.chart-releaser = pkgs.callPackage ./pkgs/chart-releaser {
-          #   inherit (inputs.gomod2nix.legacyPackages.${system}) buildGoApplication;
-          # };
-
-          packages.gomod2nix = inputs.gomod2nix.packages.${system}.default;
+          apps.gomod2nix = {
+            type = "app";
+            program = "${pkgs.gomod2nix}/bin/gomod2nix";
+          };
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
-              final.gomod2nix
+              gomod2nix
               nil
               nixd
               nixfmt-rfc-style
