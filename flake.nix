@@ -4,27 +4,34 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    gomod2nix.url = "github:nix-community/gomod2nix?ref=v1.7.0";
-    gomod2nix.inputs.nixpkgs.follows = "nixpkgs";
-    nil.url = "github:oxalica/nil";
-    treefmt-nix.url = "github:numtide/treefmt-nix";
-    treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
+    systems.url = "github:nix-systems/default";
+
+    gomod2nix = {
+      url = "github:nix-community/gomod2nix?ref=v1.7.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nil = {
+      url = "github:oxalica/nil";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
     inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [
-        "x86_64-linux"
-        "aarch64-linux"
-        "x86_64-darwin"
-        "aarch64-darwin"
-      ];
+      systems = import inputs.systems;
       imports = [
         inputs.treefmt-nix.flakeModule
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
       ];
+
       perSystem =
         {
           config,
@@ -46,7 +53,7 @@
           packages.gomod2nix = inputs.gomod2nix.packages.${system}.default;
 
           devShells.default = pkgs.mkShellNoCC {
-            nativeBuildInputs = with pkgs; [
+            packages = with pkgs; [
               final.gomod2nix
               nil
               nixd
