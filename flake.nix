@@ -39,7 +39,8 @@
       ];
 
       perSystem =
-        { self',
+        {
+          self',
           pkgs,
           system,
           config,
@@ -64,7 +65,6 @@
             meta.description = "Convert applications using Go modules to Nix expressions";
           };
 
-          packages.default = self'.packages.aspire-cli;
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
               gomod2nix
