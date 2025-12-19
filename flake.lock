@@ -113,7 +113,7 @@
         "flake-parts": "flake-parts",
         "gomod2nix": "gomod2nix",
         "nil": "nil",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs",
         "systems": "systems_2",
         "treefmt-nix": "treefmt-nix"
       }
