@@ -5,9 +5,6 @@
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     systems.url = "github:nix-systems/default";
     flake-parts.url = "github:hercules-ci/flake-parts";
-    systems.url = "github:nix-systems/default";
-    gomod2nix.url = "github:nix-community/gomod2nix?ref=v1.7.0";
-    gomod2nix.inputs.nixpkgs.follows = "nixpkgs";
 
     gomod2nix = {
       url = "github:nix-community/gomod2nix?ref=v1.7.0";
@@ -33,6 +30,7 @@
       imports = [
         inputs.treefmt-nix.flakeModule
         ./packages/aspire-cli
+        ./packages/chart-releaser
 
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
