@@ -31,6 +31,7 @@
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
 
+        ./packages/actions-runner
         ./packages/chart-releaser
       ];
 
