@@ -30,6 +30,7 @@
       imports = [
         inputs.treefmt-nix.flakeModule
 
+        ./packages/actions-runner
         ./packages/chart-releaser
         ./packages/mmake
 
