@@ -31,7 +31,7 @@
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
 
-        ./pkgs/chart-releaser
+        ./packages/chart-releaser
       ];
 
       perSystem =
