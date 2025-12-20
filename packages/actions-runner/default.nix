@@ -2,7 +2,8 @@
   perSystem =
     { pkgs, system, ... }:
     let
-      # Map from NixOS system names to dev.sh layout names
+      # Map from NixOS system names to runtime identifiers used by .NET
+      # https://learn.microsoft.com/en-us/dotnet/core/rid-catalog
       rids = {
         x86_64-linux = "linux-x64";
         aarch64-linux = "linux-arm64";
