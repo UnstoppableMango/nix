@@ -31,7 +31,7 @@
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
 
-        ./pkgs/chart-releaser
+        ./packages/chart-releaser
       ];
 
       perSystem =
@@ -43,7 +43,10 @@
         {
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
-            overlays = [ inputs.gomod2nix.overlays.default ];
+            overlays = [
+              inputs.gomod2nix.overlays.default
+              inputs.nil.overlays.default
+            ];
           };
 
           apps.gomod2nix = {
