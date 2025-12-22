@@ -3,8 +3,8 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    flake-parts.url = "github:hercules-ci/flake-parts";
     systems.url = "github:nix-systems/default";
+    flake-parts.url = "github:hercules-ci/flake-parts";
 
     gomod2nix = {
       url = "github:nix-community/gomod2nix";
@@ -32,11 +32,13 @@
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
 
+        ./packages/aspire-cli
         ./packages/chart-releaser
       ];
 
       perSystem =
         {
+          self',
           pkgs,
           system,
           ...
@@ -52,6 +54,7 @@
 
           apps.gomod2nix = {
             type = "app";
+            meta.description = "Convert go.mod/go.sum to Nix packages";
             program = "${pkgs.gomod2nix}/bin/gomod2nix";
           };
 
@@ -59,7 +62,6 @@
             packages = with pkgs; [
               gomod2nix
               nil
-              nixd
               nixfmt-rfc-style
               nurl
             ];
