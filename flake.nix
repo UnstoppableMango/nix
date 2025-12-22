@@ -7,7 +7,7 @@
     systems.url = "github:nix-systems/default";
 
     gomod2nix = {
-      url = "github:nix-community/gomod2nix?ref=v1.7.0";
+      url = "github:nix-community/gomod2nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -26,6 +26,7 @@
     inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
+
       imports = [
         inputs.treefmt-nix.flakeModule
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
