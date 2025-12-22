@@ -5,7 +5,7 @@ check:
 	$(NIX) flake check --all-systems
 
 build: packages/chart-releaser/gomod2nix.toml
-	$(NIX) build
+	$(NIX) build .#chart-releaser
 
 # TODO: The generated toml file isn't correct
 packages/chart-releaser/gomod2nix.toml:
