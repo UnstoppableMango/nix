@@ -1,15 +1,25 @@
 NIX       ?= nix
 GOMOD2NIX ?= gomod2nix
 
+PACKAGES := chart-releaser mmake
+
 check:
 	$(NIX) flake check --all-systems
 
-build: packages/chart-releaser/gomod2nix.toml
-	$(NIX) build .#chart-releaser
+build: ${PACKAGES}
 
-# TODO: The generated toml file isn't correct
-packages/chart-releaser/gomod2nix.toml:
-	$(GOMOD2NIX) generate github.com/helm/chart-releaser --outdir ${@D}
+${PACKAGES}: %: packages/%/gomod2nix.toml
+	$(NIX) build .#$*
+
+packages/chart-releaser/go.mod:
+	curl -o $@ https://raw.githubusercontent.com/helm/chart-releaser/refs/heads/main/go.mod
+packages/chart-releaser/gomod2nix.toml: packages/chart-releaser/go.mod
+	$(GOMOD2NIX) generate --dir ${@D}
+
+packages/mmake/go.mod:
+	curl -o $@ https://raw.githubusercontent.com/tj/mmake/refs/heads/master/go.mod
+packages/mmake/gomod2nix.toml: packages/mmake/go.mod
+	$(GOMOD2NIX) generate --dir ${@D}
 
 .vscode/settings.json: hack/vscode.json
 	mkdir -p ${@D} && cp $< $@

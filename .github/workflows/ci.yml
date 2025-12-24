@@ -22,4 +22,4 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix flake check
-      - run: nix build '.#chart-releaser'
+      - run: nix build .#chart-releaser .#mmake
