@@ -29,16 +29,19 @@
 
       imports = [
         inputs.treefmt-nix.flakeModule
-        # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
-        inputs.flake-parts.flakeModules.easyOverlay
 
         ./packages/chart-releaser
+        ./packages/mmake
+
+        # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
+        inputs.flake-parts.flakeModules.easyOverlay
       ];
 
       perSystem =
         {
           pkgs,
           system,
+          config,
           ...
         }:
         {
@@ -50,9 +53,14 @@
             ];
           };
 
+          overlayAttrs = {
+            inherit (config.pkgs) chart-releaser gomod2nix;
+          };
+
           apps.gomod2nix = {
             type = "app";
             program = "${pkgs.gomod2nix}/bin/gomod2nix";
+            meta.description = "Convert applications using Go modules to Nix expressions";
           };
 
           devShells.default = pkgs.mkShellNoCC {
@@ -60,7 +68,7 @@
               gomod2nix
               nil
               nixd
-              nixfmt-rfc-style
+              nixfmt
               nurl
             ];
           };
