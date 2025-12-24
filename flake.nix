@@ -54,7 +54,7 @@
           };
 
           overlayAttrs = {
-            inherit (config.pkgs) chart-releaser gomod2nix;
+            inherit (config.pkgs) chart-releaser gomod2nix mmake;
           };
 
           apps.gomod2nix = {
