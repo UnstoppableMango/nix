@@ -31,6 +31,7 @@
         inputs.treefmt-nix.flakeModule
 
         ./packages/chart-releaser
+        ./packages/cliwrap
         ./packages/mmake
 
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
