@@ -4,6 +4,7 @@
     let
       dotnet = pkgs.dotnetCorePackages.sdk_10_0_1xx;
 
+      # TODO: System.Resources.MissingManifestResourceException: Could not find the resource "Aspire.Cli.Resources.NewCommandStrings.resources" among the resources "Aspire.Cli.Resources.dotnet-install.sh", "Aspire.Cli.Resources.dotnet-install.ps1" embedded in the assembly "aspire", nor among the resources in any satellite assemblies for the specified culture. Perhaps the resources were embedded with an incorrect name.
       aspire-cli = pkgs.buildDotnetModule rec {
         pname = "aspire-cli";
         version = "13.0.2";
