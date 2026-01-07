@@ -56,7 +56,12 @@
           };
 
           overlayAttrs = {
-            inherit (config.pkgs) chart-releaser gomod2nix mmake openshift-installer;
+            inherit (config.pkgs)
+              chart-releaser
+              gomod2nix
+              mmake
+              openshift-installer
+              ;
           };
 
           apps.gomod2nix = {
