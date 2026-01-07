@@ -28,7 +28,7 @@
         doCheck = false;
 
         meta = with lib; {
-          description = "Install an OpnenShift Cluster";
+          description = "Install an OpenShift Cluster";
           homepage = "https://github.com/openshift/installer";
           license = licenses.asl20;
           maintainers = with maintainers; [ UnstoppableMango ];
