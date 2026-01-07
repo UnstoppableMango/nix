@@ -33,6 +33,7 @@
         ./packages/aspire-cli
         ./packages/chart-releaser
         ./packages/mmake
+        ./packages/openshift-installer
 
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
