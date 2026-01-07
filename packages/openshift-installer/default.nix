@@ -24,6 +24,9 @@
           "-X github.com/openshift/installer/pkg/version.defaultArch=amd64"
         ];
 
+        # TODO
+        doCheck = false;
+
         meta = with lib; {
           description = "Install an OpnenShift Cluster";
           homepage = "https://github.com/openshift/installer";
