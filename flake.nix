@@ -33,6 +33,7 @@
         ./packages/aspire-cli
         ./packages/chart-releaser
         ./packages/mmake
+        ./packages/openshift-installer
 
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
@@ -55,7 +56,12 @@
           };
 
           overlayAttrs = {
-            inherit (config.pkgs) chart-releaser gomod2nix mmake;
+            inherit (config.pkgs)
+              chart-releaser
+              gomod2nix
+              mmake
+              openshift-installer
+              ;
           };
 
           apps.gomod2nix = {
@@ -68,7 +74,6 @@
             packages = with pkgs; [
               gomod2nix
               nil
-              nixd
               nixfmt
               nurl
             ];
