@@ -10,7 +10,7 @@
           owner = "stackitcloud";
           repo = "kubectl-get-all";
           rev = "v${version}";
-          hash = "sha256-XDd3B95dnhpuG4redqFOysIYEQm3G6+hiE7uqdksok4=";
+          hash = "sha256-7KYnWeml3vVxklmw26S44U92Hpvgw9yIQ9wgQGrUb3U=";
         };
 
         modules = ./gomod2nix.toml;
