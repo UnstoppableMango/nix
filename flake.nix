@@ -29,16 +29,9 @@
 
       imports = [
         inputs.treefmt-nix.flakeModule
-
-        ./packages/aspire-cli
-        ./packages/chart-releaser
-        ./packages/kubectl-get-all
-        ./packages/kubectl-get-resources
-        ./packages/mmake
-        ./packages/openshift-installer
-
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
+        ./packages
       ];
 
       perSystem =
@@ -58,9 +51,10 @@
           };
 
           overlayAttrs = {
-            inherit (config.pkgs)
+            inherit (config.packages)
               chart-releaser
               gomod2nix
+              kubectl-get-all
               kubectl-get-resources
               mmake
               openshift-installer
