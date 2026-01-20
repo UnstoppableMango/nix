@@ -25,6 +25,11 @@ packages/chart-releaser/go.mod:
 packages/chart-releaser/gomod2nix.toml: packages/chart-releaser/go.mod
 	$(GOMOD2NIX) generate --dir ${@D}
 
+packages/kubectl-get-all/go.mod:
+	curl -o $@ https://raw.githubusercontent.com/stackitcloud/kubectl-get-all/refs/tags/v1.4.2/go.mod
+packages/kubectl-get-all/gomod2nix.toml: packages/kubectl-get-all/go.mod
+	$(GOMOD2NIX) generate --dir ${@D}
+
 packages/kubectl-get-resources/go.mod:
 	curl -o $@ https://raw.githubusercontent.com/Sandeep-Prajapati/kubectl-get-resources/refs/tags/v0.1.1/go.mod
 packages/kubectl-get-resources/gomod2nix.toml: packages/kubectl-get-resources/go.mod

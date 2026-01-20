@@ -22,4 +22,11 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix flake check
-      - run: nix build .#chart-releaser .#kubectl-get-resources .#mmake .#openshift-installer
+
+      - run: >
+          nix build
+          .#chart-releaser
+          .#kubectl-get-all
+          .#kubectl-get-resources
+          .#mmake
+          .#openshift-installer

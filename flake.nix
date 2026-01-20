@@ -32,6 +32,7 @@
 
         ./packages/aspire-cli
         ./packages/chart-releaser
+        ./packages/kubectl-get-all
         ./packages/kubectl-get-resources
         ./packages/mmake
         ./packages/openshift-installer
