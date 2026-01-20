@@ -1,7 +1,7 @@
 NIX       ?= nix
 GOMOD2NIX ?= gomod2nix
 
-PACKAGES := chart-releaser mmake openshift-installer
+PACKAGES := chart-releaser kubectl-get-resources mmake openshift-installer
 
 check:
 	$(NIX) flake check --all-systems
@@ -23,6 +23,11 @@ bin/aspire-cli-deps.sh:
 packages/chart-releaser/go.mod:
 	curl -o $@ https://raw.githubusercontent.com/helm/chart-releaser/refs/heads/main/go.mod
 packages/chart-releaser/gomod2nix.toml: packages/chart-releaser/go.mod
+	$(GOMOD2NIX) generate --dir ${@D}
+
+packages/kubectl-get-resources/go.mod:
+	curl -o $@ https://raw.githubusercontent.com/Sandeep-Prajapati/kubectl-get-resources/refs/tags/v0.1.1/go.mod
+packages/kubectl-get-resources/gomod2nix.toml: packages/kubectl-get-resources/go.mod
 	$(GOMOD2NIX) generate --dir ${@D}
 
 packages/mmake/go.mod:

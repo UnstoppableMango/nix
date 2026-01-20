@@ -32,6 +32,7 @@
 
         ./packages/aspire-cli
         ./packages/chart-releaser
+        ./packages/kubectl-get-resources
         ./packages/mmake
         ./packages/openshift-installer
 
@@ -59,6 +60,7 @@
             inherit (config.pkgs)
               chart-releaser
               gomod2nix
+              kubectl-get-resources
               mmake
               openshift-installer
               ;
