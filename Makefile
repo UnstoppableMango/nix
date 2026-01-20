@@ -1,7 +1,7 @@
 NIX       ?= nix
 GOMOD2NIX ?= gomod2nix
 
-PACKAGES := chart-releaser mmake openshift-installer
+PACKAGES := chart-releaser kubectl-get-resources mmake openshift-installer
 
 check:
 	$(NIX) flake check --all-systems
