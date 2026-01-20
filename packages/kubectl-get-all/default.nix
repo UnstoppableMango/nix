@@ -15,6 +15,12 @@
 
         modules = ./gomod2nix.toml;
 
+        ldflags = [
+          "-w"
+          "-s"
+          "-X github.com/stackitcloud/kubectl-get-all/internal/version.Version=${version}"
+        ];
+
         meta = with lib; {
           description = "Like `kubectl get all`, but get really all resources";
           homepage = "https://github.com/stackitcloud/kubectl-get-all";
