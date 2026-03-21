@@ -10,6 +10,9 @@ build: ${PACKAGES}
 ${PACKAGES}: %: packages/%/gomod2nix.toml
 	$(NIX) build .#$*
 
+update:
+	$(NIX) flake update
+
 deps: packages/aspire-cli/deps.json
 
 packages/aspire-cli/deps.json: bin/aspire-cli-deps.sh
