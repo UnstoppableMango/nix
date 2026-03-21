@@ -69,6 +69,7 @@
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
+              bashInteractive
               gomod2nix
               nil
               nixfmt
