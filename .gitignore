@@ -2,5 +2,6 @@
 .envrc
 .vscode/*
 !.vscode/extensions.json
-result
+/result
 packages/*/go.*
+.claude/*
