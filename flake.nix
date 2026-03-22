@@ -9,6 +9,7 @@
     gomod2nix = {
       url = "github:nix-community/gomod2nix";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.inputs.systems.follows = "systems";
     };
 
     nil = {
@@ -33,6 +34,17 @@
         inputs.flake-parts.flakeModules.easyOverlay
         ./packages
       ];
+
+      flake.templates = {
+        default = {
+          path = ./templates/default;
+          description = "Flake with nix-systems, flake-parts, and treefmt-nix";
+        };
+        go = {
+          path = ./templates/go;
+          description = "Go flake with nix-systems, flake-parts, treefmt-nix, and gomod2nix";
+        };
+      };
 
       perSystem =
         {
