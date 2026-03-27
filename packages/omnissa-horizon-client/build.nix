@@ -25,7 +25,7 @@ let
   # For USB support, ensure that /var/run/omnissa/<YOUR-UID>
   # exists and is owned by you. Then run omnissa-usbarbitrator as root.
 
-  mainProgram = "horizon-client";
+  mainProgram = "horizon-client-next";
 
   # This forces the default GTK theme (Adwaita) because Horizon is prone to
   # UI usability issues when using non-default themes, such as Adwaita-dark.
@@ -148,13 +148,12 @@ stdenv.mkDerivation {
     runHook preInstall
     mkdir -p $out/bin
     ln -s ${omnissaFHSUserEnv "horizon-client"}/bin/horizon-client $out/bin/
+    ln -s ${omnissaFHSUserEnv "horizon-client"}/bin/horizon-client-next $out/bin/
     ln -s ${omnissaFHSUserEnv "omnissa-usbarbitrator"}/bin/omnissa-usbarbitrator $out/bin/
     runHook postInstall
   '';
 
   unwrapped = omnissaHorizonClientFiles;
-
-  passthru.updateScript = ./update.sh;
 
   meta = {
     inherit mainProgram;
@@ -162,6 +161,6 @@ stdenv.mkDerivation {
     homepage = "https://www.omnissa.com/products/horizon-8/";
     license = lib.licenses.unfree;
     platforms = [ "x86_64-linux" ];
-    maintainers = with lib.maintainers; [ mhutter ];
+    maintainers = with lib.maintainers; [ UnstoppableMango ];
   };
 }
