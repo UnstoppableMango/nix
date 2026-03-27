@@ -11,7 +11,7 @@ buildGoApplication {
   src = cleanSource ../.;
   modules = ../gomod2nix.toml;
 
-  nativeBuildInputs = [ ginkgo ];
+  nativeCheckInputs = [ ginkgo ];
 
   checkPhase = ''
     ginkgo run ./...
