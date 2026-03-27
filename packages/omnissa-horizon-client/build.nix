@@ -148,7 +148,7 @@ stdenv.mkDerivation {
     runHook preInstall
     mkdir -p $out/bin
     ln -s ${omnissaFHSUserEnv "horizon-client"}/bin/horizon-client $out/bin/
-    ln -s ${omnissaFHSUserEnv "horizon-client"}/bin/horizon-client-next $out/bin/
+    ln -s ${omnissaFHSUserEnv "horizon-client-next"}/bin/horizon-client-next $out/bin/
     ln -s ${omnissaFHSUserEnv "omnissa-usbarbitrator"}/bin/omnissa-usbarbitrator $out/bin/
     runHook postInstall
   '';
