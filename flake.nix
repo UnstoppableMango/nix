@@ -56,6 +56,9 @@
         {
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
+
+            config.allowUnfree = true;
+
             overlays = [
               inputs.gomod2nix.overlays.default
               inputs.nil.overlays.default

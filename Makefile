@@ -4,7 +4,7 @@ GOMOD2NIX ?= gomod2nix
 PACKAGES := chart-releaser kubectl-get-resources mmake openshift-installer
 
 check:
-	$(NIX) flake check --all-systems
+	$(NIX) flake check
 
 build: ${PACKAGES}
 ${PACKAGES}: %: packages/%/gomod2nix.toml
