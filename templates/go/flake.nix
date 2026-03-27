@@ -46,6 +46,7 @@
               direnv
               go
               gomod2nix
+              gopls
               gnumake
               nixfmt
             ];
