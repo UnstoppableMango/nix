@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: nix-runners
+    env:
+      NIXPKGS_ALLOW_UNFREE: 1
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
@@ -30,5 +32,3 @@ jobs:
           .#kubectl-get-resources
           .#mmake
           .#openshift-installer
-        env:
-          NIXPKGS_ALLOW_UNFREE: 1
