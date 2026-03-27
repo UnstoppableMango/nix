@@ -26,20 +26,27 @@
     inputs@{ flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
-      imports = [ inputs.treefmt-nix.flakeModule ];
+      imports = with inputs; [ treefmt-nix.flakeModule ];
 
       perSystem =
         { pkgs, system, ... }:
+        let
+          version = "0.0.1";
+        in
         {
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
-            overlays = [ inputs.gomod2nix.overlays.default ];
+            overlays = with inputs; [ gomod2nix.overlays.default ];
           };
+
+          packages.default = pkgs.callPackage ./nix { inherit version; };
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
+              direnv
               go
               gomod2nix
+              gnumake
               nixfmt
             ];
           };
