@@ -72,7 +72,8 @@
               kubectl-get-all
               kubectl-get-resources
               mmake
-              omnissa-horizon-client
+              # This is borked atm
+              # omnissa-horizon-client
               openshift-installer
               ;
           };
