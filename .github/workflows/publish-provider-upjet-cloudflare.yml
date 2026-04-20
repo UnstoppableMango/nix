@@ -1,0 +1,63 @@
+name: Publish provider-upjet-cloudflare
+
+on:
+  schedule:
+    - cron: "23 4 * * *"
+  workflow_dispatch:
+    inputs:
+      upstream-ref:
+        description: "Upstream ref to build (defaults to main)"
+        required: false
+        type: string
+      version:
+        description: "Optional explicit package/controller tag override"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: publish-provider-upjet-cloudflare
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - uses: cachix/install-nix-action@0b0e072294b088b73964f1d72dfdac0951439dbd # v31.8.4
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log in to ghcr.io
+        env:
+          CRANE_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          CRANE_USERNAME: ${{ github.actor }}
+        run: >
+          nix shell nixpkgs#crane --command
+          sh -c 'printf "%s" "$CRANE_PASSWORD" |
+          crane auth login ghcr.io -u "$CRANE_USERNAME" --password-stdin'
+
+      - name: Build and publish provider artifacts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          UPSTREAM_REF: ${{ inputs.upstream-ref }}
+          VERSION: ${{ inputs.version }}
+        run: >
+          nix shell
+          nixpkgs#bash
+          nixpkgs#coreutils
+          nixpkgs#curl
+          nixpkgs#gh
+          nixpkgs#gnumake
+          nixpkgs#gnused
+          nixpkgs#crane
+          nixpkgs#gnutar
+          nixpkgs#gzip
+          nixpkgs#skopeo
+          --command
+          bash ./bin/publish-provider-upjet-cloudflare.sh

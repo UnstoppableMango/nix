@@ -72,6 +72,7 @@
               kubectl-get-resources
               mmake
               openshift-installer
+              provider-upjet-cloudflare
               ;
           };
 
