@@ -75,6 +75,7 @@
               # This is borked atm
               # omnissa-horizon-client
               openshift-installer
+              smarter-device-manager
               ;
           };
 

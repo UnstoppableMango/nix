@@ -7,5 +7,6 @@
     ./mmake
     ./omnissa-horizon-client
     ./openshift-installer
+    ./smarter-device-manager
   ];
 }
