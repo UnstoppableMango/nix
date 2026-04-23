@@ -10,14 +10,7 @@
         hash = "sha256-7KYnWeml3vVxklmw26S44U92Hpvgw9yIQ9wgQGrUb3U=";
       };
 
-      updateDeps = pkgs.writeShellScript "update-deps" ''
-        dir="$(${pkgs.coreutils}/bin/mktemp -d)"
-        trap '${pkgs.coreutils}/bin/rm -rf "$dir"' EXIT
-        ${pkgs.gomod2nix}/bin/gomod2nix generate \
-          --dir ${src} \
-          --outdir "$dir"
-        ${pkgs.coreutils}/bin/cat "$dir/gomod2nix.toml"
-      '';
+      updateDeps = import ../update-deps.nix { inherit pkgs src; };
     in
     {
       apps.update-kubectl-get-all-deps = {
