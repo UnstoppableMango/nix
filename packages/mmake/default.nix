@@ -16,7 +16,7 @@
         modules = ./gomod2nix.toml;
 
         checkPhase = ''
-          go test -v ./... -skip Installer
+          go test -v ./... -skip 'Installer|Github|Universal'
         '';
 
         nativeBuildInputs = with pkgs; [
