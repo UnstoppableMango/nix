@@ -2,7 +2,7 @@
   perSystem =
     { pkgs, lib, ... }:
     let
-        version = "1.4.2";
+      version = "1.4.2";
       src = pkgs.fetchFromGitHub {
         owner = "stackitcloud";
         repo = "kubectl-get-all";
@@ -11,7 +11,8 @@
       };
 
       updateDeps = pkgs.writeShellScript "update-deps" ''
-        dir="$(mktemp -d)"
+        dir="$(${pkgs.coreutils}/bin/mktemp -d)"
+        trap '${pkgs.coreutils}/bin/rm -rf "$dir"' EXIT
         ${pkgs.gomod2nix}/bin/gomod2nix generate \
           --dir ${src} \
           --outdir "$dir"

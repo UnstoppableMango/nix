@@ -3,7 +3,7 @@ GO_PKGS  := chart-releaser kubectl-get-resources mmake openshift-installer
 ALL_PKGS := ${CS_PKGS} ${GO_PKGS} omnissa-horizon-client
 
 check:
-	$(NIX) flake check
+	nix flake check
 
 build: ${GO_PKGS}
 ${GO_PKGS}: %: packages/%/gomod2nix.toml
@@ -15,7 +15,7 @@ update:
 deps: ${CS_PKGS:%=packages/%/deps.json} ${GO_PKGS:%=packages/%/gomod2nix.toml}
 
 packages/%/deps.json: packages/%/default.nix
-	"$$(nix build .#aspire-cli.fetch-deps --print-out-paths)" ${CURDIR}/$@
+	"$$(nix build .#$*.fetch-deps --print-out-paths)" ${CURDIR}/$@
 
 packages/%/gomod2nix.toml: packages/%/default.nix
 	nix run .#update-$*-deps >$@
