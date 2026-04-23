@@ -1,17 +1,33 @@
 {
   perSystem =
     { pkgs, lib, ... }:
+    let
+      version = "1.4.2";
+      src = pkgs.fetchFromGitHub {
+        owner = "stackitcloud";
+        repo = "kubectl-get-all";
+        rev = "v${version}";
+        hash = "sha256-7KYnWeml3vVxklmw26S44U92Hpvgw9yIQ9wgQGrUb3U=";
+      };
+
+      updateDeps = pkgs.writeShellScript "update-deps" ''
+        dir="$(${pkgs.coreutils}/bin/mktemp -d)"
+        trap '${pkgs.coreutils}/bin/rm -rf "$dir"' EXIT
+        ${pkgs.gomod2nix}/bin/gomod2nix generate \
+          --dir ${src} \
+          --outdir "$dir"
+        ${pkgs.coreutils}/bin/cat "$dir/gomod2nix.toml"
+      '';
+    in
     {
+      apps.update-kubectl-get-all-deps = {
+        type = "app";
+        program = "${updateDeps}";
+      };
+
       packages.kubectl-get-all = pkgs.buildGoApplication rec {
         pname = "kubectl-get-all";
-        version = "1.4.2";
-
-        src = pkgs.fetchFromGitHub {
-          owner = "stackitcloud";
-          repo = "kubectl-get-all";
-          rev = "v${version}";
-          hash = "sha256-7KYnWeml3vVxklmw26S44U92Hpvgw9yIQ9wgQGrUb3U=";
-        };
+        inherit version src;
 
         modules = ./gomod2nix.toml;
 
