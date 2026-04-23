@@ -10,7 +10,7 @@
           owner = "openshift";
           repo = "installer";
           rev = "release-${version}";
-          hash = "sha256-BA65db5BAWAgxASPY3G+VE1OSgau+I+vQkIkE71IScM=";
+          hash = "sha256-VYjmhmbUt6IXUA+pwzfESTp/7hqWwukp7sE6wF5Ouus=";
         };
 
         modules = ./gomod2nix.toml;
