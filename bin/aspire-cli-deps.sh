@@ -1,1 +1,0 @@
-/nix/store/szii8klparxq7afpxrlhrw475wf2lr6i-aspire-cli-13.0.2-fetch-deps

@@ -5,3 +5,4 @@
 /result
 packages/*/go.*
 .claude/*
+bin/

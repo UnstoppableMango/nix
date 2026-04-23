@@ -1,17 +1,32 @@
 {
   perSystem =
     { pkgs, lib, ... }:
-    {
-      packages.openshift-installer = pkgs.buildGoApplication rec {
-        pname = "openshift-installer";
-        version = "4.23";
+    let
+      version = "4.23";
+      src = pkgs.fetchFromGitHub {
+        owner = "openshift";
+        repo = "installer";
+        rev = "release-${version}";
+        hash = "sha256-VYjmhmbUt6IXUA+pwzfESTp/7hqWwukp7sE6wF5Ouus=";
+      };
 
-        src = pkgs.fetchFromGitHub {
-          owner = "openshift";
-          repo = "installer";
-          rev = "release-${version}";
-          hash = "sha256-VYjmhmbUt6IXUA+pwzfESTp/7hqWwukp7sE6wF5Ouus=";
-        };
+      updateDeps = pkgs.writeShellScript "update-deps" ''
+        dir="$(mktemp -d)"
+        ${pkgs.gomod2nix}/bin/gomod2nix generate \
+          --dir ${src} \
+          --outdir "$dir"
+        ${pkgs.coreutils}/bin/cat "$dir/gomod2nix.toml"
+      '';
+    in
+    {
+      apps.update-openshift-installer-deps = {
+        type = "app";
+        program = "${updateDeps}";
+      };
+
+      packages.openshift-installer = pkgs.buildGoApplication {
+        pname = "openshift-installer";
+        inherit version src;
 
         modules = ./gomod2nix.toml;
         subPackages = [ "cmd/openshift-install" ];

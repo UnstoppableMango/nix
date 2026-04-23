@@ -1,17 +1,32 @@
 {
   perSystem =
     { pkgs, lib, ... }:
-    {
-      packages.kubectl-get-resources = pkgs.buildGoApplication rec {
-        pname = "kubectl-get-resources";
-        version = "0.1.1";
+    let
+      version = "0.1.1";
+      src = pkgs.fetchFromGitHub {
+        owner = "Sandeep-Prajapati";
+        repo = "kubectl-get-resources";
+        rev = "v${version}";
+        hash = "sha256-XDd3B95dnhpuG4redqFOysIYEQm3G6+hiE7uqdksok4=";
+      };
 
-        src = pkgs.fetchFromGitHub {
-          owner = "Sandeep-Prajapati";
-          repo = "kubectl-get-resources";
-          rev = "v${version}";
-          hash = "sha256-XDd3B95dnhpuG4redqFOysIYEQm3G6+hiE7uqdksok4=";
-        };
+      updateDeps = pkgs.writeShellScript "update-deps" ''
+        dir="$(mktemp -d)"
+        ${pkgs.gomod2nix}/bin/gomod2nix generate \
+          --dir ${src} \
+          --outdir "$dir"
+        ${pkgs.coreutils}/bin/cat "$dir/gomod2nix.toml"
+      '';
+    in
+    {
+      apps.update-kubectl-get-resources-deps = {
+        type = "app";
+        program = "${updateDeps}";
+      };
+
+      packages.kubectl-get-resources = pkgs.buildGoApplication {
+        pname = "kubectl-get-resources";
+        inherit version src;
 
         modules = ./gomod2nix.toml;
 

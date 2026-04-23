@@ -1,17 +1,32 @@
 {
   perSystem =
     { pkgs, lib, ... }:
-    {
-      packages.chart-releaser = pkgs.buildGoApplication rec {
-        pname = "chart-releaser";
-        version = "1.8.1";
+    let
+      version = "1.8.1";
+      src = pkgs.fetchFromGitHub {
+        owner = "helm";
+        repo = "chart-releaser";
+        rev = "v${version}";
+        hash = "sha256-h1czHb/xK+kOEK4TJhMnwnLeVmQm52C8dTUy+fahJ90=";
+      };
 
-        src = pkgs.fetchFromGitHub {
-          owner = "helm";
-          repo = "chart-releaser";
-          rev = "v${version}";
-          hash = "sha256-h1czHb/xK+kOEK4TJhMnwnLeVmQm52C8dTUy+fahJ90=";
-        };
+      updateDeps = pkgs.writeShellScript "update-deps" ''
+        dir="$(mktemp -d)"
+        ${pkgs.gomod2nix}/bin/gomod2nix generate \
+          --dir ${src} \
+          --outdir "$dir"
+        ${pkgs.coreutils}/bin/cat "$dir/gomod2nix.toml"
+      '';
+    in
+    {
+      apps.update-chart-releaser-deps = {
+        type = "app";
+        program = "${updateDeps}";
+      };
+
+      packages.chart-releaser = pkgs.buildGoApplication {
+        pname = "chart-releaser";
+        inherit version src;
 
         modules = ./gomod2nix.toml;
 
