@@ -10,14 +10,7 @@
         hash = "sha256-VYjmhmbUt6IXUA+pwzfESTp/7hqWwukp7sE6wF5Ouus=";
       };
 
-      updateDeps = pkgs.writeShellScript "update-deps" ''
-        dir="$(${pkgs.coreutils}/bin/mktemp -d)"
-        trap '${pkgs.coreutils}/bin/rm -rf "$dir"' EXIT
-        ${pkgs.gomod2nix}/bin/gomod2nix generate \
-          --dir ${src} \
-          --outdir "$dir"
-        ${pkgs.coreutils}/bin/cat "$dir/gomod2nix.toml"
-      '';
+      updateDeps = import ../update-deps.nix { inherit pkgs src; };
     in
     {
       apps.update-openshift-installer-deps = {
