@@ -10,8 +10,15 @@
         rev = "v${version}";
         hash = "sha256-uACRrhlSzGctl+ZeSIM2QLI4Uwr1uFbh+m5qpg06Ahs=";
       };
+
+      updateDeps = import ./update-deps.nix { inherit pkgs; src = upstreamSrc; };
     in
     {
+      apps.update-smarter-device-manager-deps = {
+        type = "app";
+        program = "${updateDeps}";
+      };
+
       packages.smarter-device-manager = pkgs.buildGoApplication {
         inherit pname version;
 
