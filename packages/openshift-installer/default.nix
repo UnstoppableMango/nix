@@ -1,4 +1,10 @@
-{ buildGoApplication, callPackage, fetchFromGitHub, lib, ... }:
+{
+  buildGoApplication,
+  callPackage,
+  fetchFromGitHub,
+  lib,
+  ...
+}:
 let
   version = "4.23";
   src = fetchFromGitHub {
