@@ -78,12 +78,6 @@
               ;
           };
 
-          apps.gomod2nix = {
-            type = "app";
-            program = "${pkgs.gomod2nix}/bin/gomod2nix";
-            meta.description = "Convert applications using Go modules to Nix expressions";
-          };
-
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
               bashInteractive
