@@ -64,7 +64,7 @@ buildGoApplication {
     }
   '';
 
-  passthru.updateDeps = callPackage ../update-deps.nix { inherit src; };
+  passthru.update-deps = callPackage ../update-deps.nix { inherit src; };
 
   meta = with lib; {
     description = "Hosting Helm Charts via GitHub Pages and Releases";

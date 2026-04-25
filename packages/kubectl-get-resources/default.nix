@@ -1,36 +1,31 @@
 {
-  perSystem =
-    { pkgs, lib, ... }:
-    let
-      version = "0.1.1";
-      src = pkgs.fetchFromGitHub {
-        owner = "Sandeep-Prajapati";
-        repo = "kubectl-get-resources";
-        rev = "v${version}";
-        hash = "sha256-XDd3B95dnhpuG4redqFOysIYEQm3G6+hiE7uqdksok4=";
-      };
+  buildGoApplication,
+  callPackage,
+  fetchFromGitHub,
+  lib,
+}:
+let
+  version = "0.1.1";
+  src = fetchFromGitHub {
+    owner = "Sandeep-Prajapati";
+    repo = "kubectl-get-resources";
+    rev = "v${version}";
+    hash = "sha256-XDd3B95dnhpuG4redqFOysIYEQm3G6+hiE7uqdksok4=";
+  };
+in
+buildGoApplication {
+  pname = "kubectl-get-resources";
+  inherit version src;
 
-      updateDeps = import ../update-deps.nix { inherit pkgs src; };
-    in
-    {
-      apps.update-kubectl-get-resources-deps = {
-        type = "app";
-        program = "${updateDeps}";
-      };
+  modules = ./gomod2nix.toml;
 
-      packages.kubectl-get-resources = pkgs.buildGoApplication {
-        pname = "kubectl-get-resources";
-        inherit version src;
+  passthru.update-deps = callPackage ../update-deps.nix { inherit src; };
 
-        modules = ./gomod2nix.toml;
-
-        meta = with lib; {
-          description = "Get Kubernetes resources (cluster or namespace scope) in CSV or YAML with support for multiple filtering flags.";
-          homepage = "https://github.com/Sandeep-Prajapati/kubectl-get-resources";
-          license = licenses.asl20;
-          maintainers = with maintainers; [ UnstoppableMango ];
-          mainProgram = "kubectl-get-resources";
-        };
-      };
-    };
+  meta = with lib; {
+    description = "Get Kubernetes resources (cluster or namespace scope) in CSV or YAML with support for multiple filtering flags.";
+    homepage = "https://github.com/Sandeep-Prajapati/kubectl-get-resources";
+    license = licenses.asl20;
+    maintainers = with maintainers; [ UnstoppableMango ];
+    mainProgram = "kubectl-get-resources";
+  };
 }

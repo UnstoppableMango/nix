@@ -1,48 +1,43 @@
 {
-  perSystem =
-    { pkgs, lib, ... }:
-    let
-      version = "1.4.0";
-      src = pkgs.fetchFromGitHub {
-        owner = "tj";
-        repo = "mmake";
-        rev = "v${version}";
-        hash = "sha256-JPsVfLIl06PJ8Nsfu7ogwrttB1G93HTKbZFqUTSV9O8=";
-      };
+  buildGoApplication,
+  callPackage,
+  fetchFromGitHub,
+  gnumake,
+  lib,
+  makeWrapper,
+}:
+let
+  version = "1.4.0";
+  src = fetchFromGitHub {
+    owner = "tj";
+    repo = "mmake";
+    rev = "v${version}";
+    hash = "sha256-JPsVfLIl06PJ8Nsfu7ogwrttB1G93HTKbZFqUTSV9O8=";
+  };
+in
+buildGoApplication {
+  pname = "mmake";
+  inherit version src;
 
-      updateDeps = import ../update-deps.nix { inherit pkgs src; };
-    in
-    {
-      apps.update-mmake-deps = {
-        type = "app";
-        program = "${updateDeps}";
-      };
+  modules = ./gomod2nix.toml;
 
-      packages.mmake = pkgs.buildGoApplication {
-        pname = "mmake";
-        inherit version src;
+  checkPhase = ''
+    go test -v ./... -skip 'Installer|Github|Universal'
+  '';
 
-        modules = ./gomod2nix.toml;
+  nativeBuildInputs = [ makeWrapper ];
 
-        checkPhase = ''
-          go test -v ./... -skip 'Installer|Github|Universal'
-        '';
+  postInstall = ''
+    wrapProgram $out/bin/mmake --prefix PATH : ${lib.makeBinPath [ gnumake ]}
+  '';
 
-        nativeBuildInputs = with pkgs; [
-          makeWrapper
-        ];
+  passthru.update-deps = callPackage ../update-deps.nix { inherit src; };
 
-        postInstall = ''
-          wrapProgram $out/bin/mmake --prefix PATH : ${lib.makeBinPath [ pkgs.gnumake ]}
-        '';
-
-        meta = with lib; {
-          description = "Modern Make";
-          homepage = "https://github.com/tj/mmake";
-          license = licenses.mit;
-          maintainers = with maintainers; [ UnstoppableMango ];
-          mainProgram = "mmake";
-        };
-      };
-    };
+  meta = with lib; {
+    description = "Modern Make";
+    homepage = "https://github.com/tj/mmake";
+    license = licenses.mit;
+    maintainers = with maintainers; [ UnstoppableMango ];
+    mainProgram = "mmake";
+  };
 }
