@@ -1,15 +1,18 @@
 {
   perSystem =
-    { pkgs, ... }:
+    { inputs', pkgs, ... }:
     let
-      aspire-cli = pkgs.callPackage ./aspire-cli { };
-      chart-releaser = pkgs.callPackage ./chart-releaser { };
-      kubectl-get-all = pkgs.callPackage ./kubectl-get-all { };
-      kubectl-get-resources = pkgs.callPackage ./kubectl-get-resources { };
-      mmake = pkgs.callPackage ./mmake { };
-      omnissa-horizon-client = pkgs.callPackage ./omnissa-horizon-client { };
-      openshift-installer = pkgs.callPackage ./openshift-installer { };
-      smarter-device-manager = pkgs.callPackage ./smarter-device-manager { };
+      inherit (pkgs) callPackage;
+      inherit (inputs'.gomod2nix.legacyPackages) buildGoApplication;
+
+      aspire-cli = callPackage ./aspire-cli { };
+      chart-releaser = callPackage ./chart-releaser { inherit buildGoApplication; };
+      kubectl-get-all = callPackage ./kubectl-get-all { inherit buildGoApplication; };
+      kubectl-get-resources = callPackage ./kubectl-get-resources { inherit buildGoApplication; };
+      mmake = callPackage ./mmake { inherit buildGoApplication; };
+      omnissa-horizon-client = callPackage ./omnissa-horizon-client { };
+      openshift-installer = callPackage ./openshift-installer { inherit buildGoApplication; };
+      smarter-device-manager = callPackage ./smarter-device-manager { inherit buildGoApplication; };
     in
     {
       packages = {
