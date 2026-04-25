@@ -68,7 +68,6 @@
           overlayAttrs = {
             inherit (config.packages)
               chart-releaser
-              gomod2nix
               kubectl-get-all
               kubectl-get-resources
               mmake
