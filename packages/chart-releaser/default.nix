@@ -1,73 +1,76 @@
 {
-  perSystem =
-    { pkgs, lib, ... }:
-    let
-      version = "1.8.1";
-      src = pkgs.fetchFromGitHub {
-        owner = "helm";
-        repo = "chart-releaser";
-        rev = "v${version}";
-        hash = "sha256-h1czHb/xK+kOEK4TJhMnwnLeVmQm52C8dTUy+fahJ90=";
-      };
+  buildGoApplication,
+  callPackage,
+  coreutils,
+  fetchFromGitHub,
+  git,
+  installShellFiles,
+  kubectl,
+  kubernetes-helm,
+  lib,
+  makeWrapper,
+  yamale,
+  yamllint,
+}:
+let
+  version = "1.8.1";
+  src = fetchFromGitHub {
+    owner = "helm";
+    repo = "chart-releaser";
+    rev = "v${version}";
+    hash = "sha256-h1czHb/xK+kOEK4TJhMnwnLeVmQm52C8dTUy+fahJ90=";
+  };
+in
+buildGoApplication {
+  pname = "chart-releaser";
+  inherit version src;
 
-      updateDeps = import ../update-deps.nix { inherit pkgs src; };
-    in
-    {
-      apps.update-chart-releaser-deps = {
-        type = "app";
-        program = "${updateDeps}";
-      };
+  modules = ./gomod2nix.toml;
 
-      packages.chart-releaser = pkgs.buildGoApplication {
-        pname = "chart-releaser";
-        inherit version src;
+  postPatch = ''
+    substituteInPlace pkg/config/config.go \
+      --replace "\"/etc/cr\"," "\"$out/etc/cr\","
+  '';
 
-        modules = ./gomod2nix.toml;
+  ldflags = [
+    "-w"
+    "-s"
+    "-X github.com/helm/chart-releaser/cr/cmd.Version=${version}"
+    "-X github.com/helm/chart-releaser/cr/cmd.GitCommit=${src.rev}"
+    "-X github.com/helm/chart-releaser/cr/cmd.BuildDate=19700101-00:00:00"
+  ];
 
-        postPatch = ''
-          substituteInPlace pkg/config/config.go \
-            --replace "\"/etc/cr\"," "\"$out/etc/cr\","
-        '';
+  nativeBuildInputs = [
+    git
+    installShellFiles
+    makeWrapper
+  ];
 
-        ldflags = [
-          "-w"
-          "-s"
-          "-X github.com/helm/chart-releaser/cr/cmd.Version=${version}"
-          "-X github.com/helm/chart-releaser/cr/cmd.GitCommit=${src.rev}"
-          "-X github.com/helm/chart-releaser/cr/cmd.BuildDate=19700101-00:00:00"
-        ];
+  postInstall = ''
+    installShellCompletion --cmd cr \
+      --bash <($out/bin/cr completion bash) \
+      --zsh <($out/bin/cr completion zsh) \
+      --fish <($out/bin/cr completion fish) \
 
-        nativeBuildInputs = with pkgs; [
-          git
-          installShellFiles
-          makeWrapper
-        ];
+    wrapProgram $out/bin/cr --prefix PATH : ${
+      lib.makeBinPath [
+        coreutils
+        git
+        kubectl
+        kubernetes-helm
+        yamale
+        yamllint
+      ]
+    }
+  '';
 
-        postInstall = ''
-          installShellCompletion --cmd cr \
-            --bash <($out/bin/cr completion bash) \
-            --zsh <($out/bin/cr completion zsh) \
-            --fish <($out/bin/cr completion fish) \
+  passthru.updateDeps = callPackage ../update-deps.nix { inherit src; };
 
-          wrapProgram $out/bin/cr --prefix PATH : ${
-            lib.makeBinPath [
-              pkgs.coreutils
-              pkgs.git
-              pkgs.kubectl
-              pkgs.kubernetes-helm
-              pkgs.yamale
-              pkgs.yamllint
-            ]
-          }
-        '';
-
-        meta = with lib; {
-          description = "Hosting Helm Charts via GitHub Pages and Releases";
-          homepage = "https://github.com/helm/chart-releaser";
-          license = licenses.asl20;
-          maintainers = with maintainers; [ UnstoppableMango ];
-          mainProgram = "cr";
-        };
-      };
-    };
+  meta = with lib; {
+    description = "Hosting Helm Charts via GitHub Pages and Releases";
+    homepage = "https://github.com/helm/chart-releaser";
+    license = licenses.asl20;
+    maintainers = with maintainers; [ UnstoppableMango ];
+    mainProgram = "cr";
+  };
 }
