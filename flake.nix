@@ -59,9 +59,9 @@
 
             config.allowUnfree = true;
 
-            overlays = [
-              inputs.gomod2nix.overlays.default
-              inputs.nil.overlays.default
+            overlays = with inputs; [
+              gomod2nix.overlays.default
+              nil.overlays.default
             ];
           };
 

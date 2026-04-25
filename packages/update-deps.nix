@@ -6,5 +6,5 @@ pkgs.writeShellScript "update-deps" ''
   ${pkgs.gomod2nix}/bin/gomod2nix generate \
     --dir "${src}" \
     --outdir "$dir"
-  ${pkgs.coreutils}/bin/cat "$dir/gomod2nix.toml"
+  ${pkgs.coreutils}/bin/cp "$dir/gomod2nix.toml" "$1"
 ''

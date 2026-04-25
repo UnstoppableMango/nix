@@ -1,48 +1,44 @@
 {
-  perSystem =
-    { pkgs, lib, ... }:
-    let
-      version = "4.23";
-      src = pkgs.fetchFromGitHub {
-        owner = "openshift";
-        repo = "installer";
-        rev = "release-${version}";
-        hash = "sha256-VYjmhmbUt6IXUA+pwzfESTp/7hqWwukp7sE6wF5Ouus=";
-      };
+  buildGoApplication,
+  callPackage,
+  fetchFromGitHub,
+  lib,
+  ...
+}:
+let
+  version = "4.23";
+  src = fetchFromGitHub {
+    owner = "openshift";
+    repo = "installer";
+    rev = "release-${version}";
+    hash = "sha256-VYjmhmbUt6IXUA+pwzfESTp/7hqWwukp7sE6wF5Ouus=";
+  };
+in
+buildGoApplication {
+  pname = "openshift-installer";
+  inherit version src;
 
-      updateDeps = import ../update-deps.nix { inherit pkgs src; };
-    in
-    {
-      apps.update-openshift-installer-deps = {
-        type = "app";
-        program = "${updateDeps}";
-      };
+  modules = ./gomod2nix.toml;
+  subPackages = [ "cmd/openshift-install" ];
 
-      packages.openshift-installer = pkgs.buildGoApplication {
-        pname = "openshift-installer";
-        inherit version src;
+  ldflags = [
+    "-w"
+    "-s"
+    "-X github.com/openshift/installer/pkg/version.Raw=${version}"
+    "-X github.com/openshift/installer/pkg/version.Commit=${src.rev}"
+    "-X github.com/openshift/installer/pkg/version.defaultArch=amd64"
+  ];
 
-        modules = ./gomod2nix.toml;
-        subPackages = [ "cmd/openshift-install" ];
+  # TODO
+  doCheck = false;
 
-        ldflags = [
-          "-w"
-          "-s"
-          "-X github.com/openshift/installer/pkg/version.Raw=${version}"
-          "-X github.com/openshift/installer/pkg/version.Commit=${src.rev}"
-          "-X github.com/openshift/installer/pkg/version.defaultArch=amd64"
-        ];
+  passthru.update-deps = callPackage ../update-deps.nix { inherit src; };
 
-        # TODO
-        doCheck = false;
-
-        meta = with lib; {
-          description = "Install an OpenShift Cluster";
-          homepage = "https://github.com/openshift/installer";
-          license = licenses.asl20;
-          maintainers = with maintainers; [ UnstoppableMango ];
-          mainProgram = "openshift-install";
-        };
-      };
-    };
+  meta = with lib; {
+    description = "Install an OpenShift Cluster";
+    homepage = "https://github.com/openshift/installer";
+    license = licenses.asl20;
+    maintainers = with maintainers; [ UnstoppableMango ];
+    mainProgram = "openshift-install";
+  };
 }
