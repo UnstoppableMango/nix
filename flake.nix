@@ -71,10 +71,7 @@
               kubectl-get-all
               kubectl-get-resources
               mmake
-              # This is borked atm
-              # omnissa-horizon-client
               openshift-installer
-              smarter-device-manager
               ;
           };
 
