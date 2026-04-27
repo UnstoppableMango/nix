@@ -65,6 +65,11 @@
             ];
           };
 
+          packages.upjet = pkgs.callPackage ./builders/upjet.nix {
+            providerName = "testing";
+            version = "0.0.1";
+          };
+
           overlayAttrs = {
             inherit (config.packages)
               chart-releaser
