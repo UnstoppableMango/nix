@@ -1,11 +1,15 @@
 {
+  crdRootGroup ? "crossplane.io",
   fetchFromGitHub,
-  stdenv,
+  lib,
   providerName,
+  providerNameLower ? lib.strings.toLower providerName,
+  organizationName,
+  stdenv,
   version,
 }:
 stdenv.mkDerivation {
-  pname = "upjet-provider-${providerName}";
+  pname = "upjet-provider-${providerNameLower}";
   inherit version;
 
   src = fetchFromGitHub {
@@ -16,11 +20,31 @@ stdenv.mkDerivation {
     fetchSubmodules = true;
   };
 
-  # preparePhase = ''
-  #   ./hack/prepare.sh
-  # '';
+  PROVIDER_NAME_LOWER = providerNameLower;
+  PROVIDER_NAME_NORMAL = providerName;
+  ORGANIZATION_NAME = organizationName;
+  CRD_ROOT_GROUP = crdRootGroup;
+
+  preConfigure = ''
+    substituteInPlace hack/prepare.sh \
+      --replace-fail "git grep" "grep"
+    patchShebangs hack/prepare.sh
+  '';
+
+  configurePhase = ''
+    runHook preConfigure
+    hack/prepare.sh
+  '';
+
+  buildPhase = ''
+    echo 'Got here'
+  '';
 
   installPhase = ''
-    cp -r $src $out
+    cp -r . $out
   '';
+
+  # installPhase = ''
+  #   cp -r $src $out
+  # '';
 }

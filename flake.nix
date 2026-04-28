@@ -68,6 +68,8 @@
           packages.upjet = pkgs.callPackage ./builders/upjet.nix {
             providerName = "testing";
             version = "0.0.1";
+            crdRootGroup = "unmango.io";
+            organizationName = "unstoppablemango";
           };
 
           overlayAttrs = {
