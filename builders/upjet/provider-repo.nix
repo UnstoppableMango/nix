@@ -3,22 +3,22 @@
   fetchFromGitHub,
   git,
   lib,
+  pname ? "upjet-provider-${providerNameLower}",
   providerName,
   providerNameLower ? lib.strings.toLower providerName,
   organizationName,
   stdenv,
-  terraformProviderSource,
-  terraformProviderRepo,
+  terraformProviderSource ? "hashicorp/${providerNameLower}",
+  terraformProviderRepo ? "https://github.com/hashicorp/terraform-provider-${providerNameLower}",
   terraformProviderVersion,
-  terraformProviderDownloadName,
+  terraformProviderDownloadName ? "terraform-provider-${providerNameLower}",
   terraformNativeProviderBinary,
-  terraformDocsPath,
+  terraformDocsPath ? "docs/resources",
   version,
 }:
 stdenv.mkDerivation {
   # https://github.com/crossplane/upjet/blob/main/docs/generating-a-provider.md
-  pname = "upjet-provider-${providerNameLower}";
-  inherit version;
+  inherit pname version;
 
   src = fetchFromGitHub {
     owner = "crossplane";
@@ -39,8 +39,8 @@ stdenv.mkDerivation {
 
   # This is terrible, but feels less error-prone than translating `git grep` to `grep`
   preConfigure = ''
-    git init -b main && git add .
     patchShebangs hack/prepare.sh
+    git init -b main && git add .
   '';
 
   configurePhase = ''
@@ -50,6 +50,7 @@ stdenv.mkDerivation {
   '';
 
   buildPhase = ''
+    runHook preBuild
     substituteInPlace Makefile \
       --subst-var-by 'TERRAFORM_PROVIDER_SOURCE' '${terraformProviderSource}' \
       --subst-var-by 'TERRAFORM_PROVIDER_REPO' '${terraformProviderRepo}' \
@@ -57,6 +58,7 @@ stdenv.mkDerivation {
       --subst-var-by 'TERRAFORM_PROVIDER_DOWNLOAD_NAME' '${terraformProviderDownloadName}' \
       --subst-var-by 'TERRAFORM_NATIVE_PROVIDER_BINARY' '${terraformNativeProviderBinary}' \
       --subst-var-by 'TERRAFORM_DOCS_PATH' '${terraformDocsPath}'
+    runHook postBuild
   '';
 
   installPhase = ''
