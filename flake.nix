@@ -32,6 +32,8 @@
         inputs.treefmt-nix.flakeModule
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
+
+        ./builders
         ./packages
       ];
 
@@ -56,20 +58,11 @@
         {
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
-
             config.allowUnfree = true;
-
             overlays = with inputs; [
               gomod2nix.overlays.default
               nil.overlays.default
             ];
-          };
-
-          packages.upjet = pkgs.callPackage ./builders/upjet.nix {
-            providerName = "testing";
-            version = "0.0.1";
-            crdRootGroup = "unmango.io";
-            organizationName = "unstoppablemango";
           };
 
           overlayAttrs = {
