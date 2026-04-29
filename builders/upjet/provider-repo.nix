@@ -15,18 +15,22 @@
   terraformNativeProviderBinary,
   terraformDocsPath ? "docs/resources",
   version,
-}:
+}@args:
 stdenv.mkDerivation {
   # https://github.com/crossplane/upjet/blob/main/docs/generating-a-provider.md
   inherit pname version;
 
-  src = fetchFromGitHub {
-    owner = "crossplane";
-    repo = "upjet-provider-template";
-    rev = "96440083ef6ed070d9413436a9d6a40000d6773f";
-    hash = "sha256-OhXPzgzaXmaWsgFow1wocyMoFY4Apb7Lj552I248l50=";
-    fetchSubmodules = true;
-  };
+  src =
+    if builtins.hasAttr "src" args then
+      builtins.getAttr "src" args
+    else
+      fetchFromGitHub {
+        owner = "crossplane";
+        repo = "upjet-provider-template";
+        rev = "96440083ef6ed070d9413436a9d6a40000d6773f";
+        hash = "sha256-OhXPzgzaXmaWsgFow1wocyMoFY4Apb7Lj552I248l50=";
+        fetchSubmodules = true;
+      };
 
   patches = [ ./Makefile.patch ];
 
@@ -65,3 +69,4 @@ stdenv.mkDerivation {
     cp -r . $out
   '';
 }
+// args

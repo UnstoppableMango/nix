@@ -1,22 +1,24 @@
 {
+  buildGoApplication,
   buildUpjetProviderRepo,
-  callPackage,
-  externalNames,
+  externalNames ? {},
   pname,
-  stdenv,
   version,
   ...
 }@args:
-stdenv.mkDerivation {
+buildGoApplication {
   inherit pname version;
 
   src =
-    callPackage buildUpjetProviderRepo {
-      inherit pname version;
-    }
-    // args;
+    if builtins.hasAttr "src" args then
+      builtins.getAttr "src" args
+    else
+      import buildUpjetProviderRepo ({ inherit pname version; } // args);
 
   buildPhase = ''
-    cp ${externalNames}
+    runHook preBuild
+    # cp ${externalNames}
+    runHook postBuild
   '';
 }
+// args
