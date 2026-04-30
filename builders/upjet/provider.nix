@@ -2,25 +2,26 @@
   buildGoApplication,
   buildUpjetProviderRepo,
   externalNames ? { },
+  modules,
   pname,
   version,
   ...
-}@args:
-buildGoApplication (
-  {
-    inherit pname version;
+}@attrs:
+let
+  src = buildUpjetProviderRepo ({ inherit pname version; } // attrs);
+in
+buildGoApplication {
+  inherit
+    pname
+    version
+    modules
+    src
+    ;
 
-    src =
-      if builtins.hasAttr "src" args then
-        builtins.getAttr "src" args
-      else
-        import buildUpjetProviderRepo ({ inherit pname version; } // args);
+  inherit (src) passthru;
 
-    buildPhase = ''
-      runHook preBuild
-      # cp ${externalNames}
-      runHook postBuild
-    '';
-  }
-  // args
-)
+  # buildPhase = ''
+  #   runHook preBuild
+  #   runHook postBuild
+  # '';
+}

@@ -1,13 +1,24 @@
 {
   perSystem =
-    { inputs', ... }:
+    { inputs', pkgs, ... }:
     let
-      inherit (inputs'.gomod2nix.legacyPackages) buildGoApplication;
+      inherit (inputs'.gomod2nix.legacyPackages) buildGoApplication gomod2nix;
 
-      buildUpjetProviderRepo = ./upjet/provider-repo.nix;
+      buildUpjetProviderRepo =
+        args:
+        pkgs.callPackage ./upjet/provider-repo.nix (
+          {
+            inherit gomod2nix;
+            inherit (pkgs) coreutils writeShellApplication;
+          }
+          // args
+        );
 
       buildUpjetProvider =
-        args: import ./upjet/provider.nix ({ inherit buildGoApplication buildUpjetProviderRepo; } // args);
+        args:
+        pkgs.callPackage ./upjet/provider.nix (
+          { inherit buildGoApplication buildUpjetProviderRepo; } // args
+        );
     in
     {
       legacyPackages = {

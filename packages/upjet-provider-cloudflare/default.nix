@@ -10,8 +10,12 @@ in
 buildUpjetProvider {
   inherit pname version;
 
+  organizationName = "cloudflare";
+  providerName = "cloudflare";
+  terraformNativeProviderBinary = "TODO";
+  terraformProviderVersion = "TODO";
+
   modules = ./gomod2nix.toml;
-  # passthru.update-deps = callPackage ./update-deps.nix { inherit src; };
 
   meta = with lib; {
     description = "TODO";

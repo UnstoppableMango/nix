@@ -82,6 +82,7 @@
               nil
               nixfmt
               nurl
+              watchexec
             ];
           };
 

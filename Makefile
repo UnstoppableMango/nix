@@ -18,7 +18,7 @@ packages/%/deps.json: packages/%/default.nix
 	"$$(nix build .#$*.fetch-deps --print-out-paths)" ${CURDIR}/$@
 
 packages/%/gomod2nix.toml: packages/%/default.nix packages/update-deps.nix
-	$$(nix build .#$*.update-deps --print-out-paths) ${CURDIR}/$@
+	"$$(nix build .#$*.update-deps --print-out-paths)/bin/update-deps" ${CURDIR}/$@
 
 .vscode/settings.json: hack/vscode.json
 	mkdir -p ${@D} && cp $< $@
