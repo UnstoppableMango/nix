@@ -12,8 +12,9 @@ buildUpjetProvider {
 
   organizationName = "cloudflare";
   providerName = "cloudflare";
-  terraformNativeProviderBinary = "TODO";
-  terraformProviderVersion = "TODO";
+  terraformProviderSource = "cloudflare/cloudflare";
+  terraformProviderRepo = "https://github.com/cloudflare/terraform-provider-cloudflare";
+  terraformProviderVersion = "5.19.0";
 
   modules = ./gomod2nix.toml;
 

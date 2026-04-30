@@ -2,17 +2,18 @@
   crdRootGroup ? "crossplane.io",
   fetchFromGitHub,
   git,
+  go,
   lib,
   pname ? "upjet-provider-${providerNameLower}",
   providerName,
   providerNameLower ? lib.strings.toLower providerName,
   organizationName,
-  stdenv,
+  stdenvNoCC,
   terraformProviderSource ? "hashicorp/${providerNameLower}",
   terraformProviderRepo ? "https://github.com/hashicorp/terraform-provider-${providerNameLower}",
   terraformProviderVersion,
   terraformProviderDownloadName ? "terraform-provider-${providerNameLower}",
-  terraformNativeProviderBinary,
+  terraformNativeProviderBinary ? "terraform-provider-${providerNameLower}_v${terraformProviderVersion}",
   terraformDocsPath ? "docs/resources",
   version,
   ...
@@ -25,11 +26,18 @@ let
     hash = "sha256-OhXPzgzaXmaWsgFow1wocyMoFY4Apb7Lj552I248l50=";
     fetchSubmodules = true;
   };
+
+  modded = import ../go/mod-edit-require.nix {
+    inherit go lib src stdenvNoCC;
+    path = lib.strings.removePrefix "https://" terraformProviderRepo;
+    version = "v${terraformProviderVersion}";
+  };
 in
-stdenv.mkDerivation {
+stdenvNoCC.mkDerivation {
   # https://github.com/crossplane/upjet/blob/main/docs/generating-a-provider.md
   inherit pname version src;
 
+  # src = modded;
   patches = [ ./Makefile.patch ];
 
   nativeBuildInputs = [ git ];
@@ -48,6 +56,8 @@ stdenv.mkDerivation {
   configurePhase = ''
     runHook preConfigure
     hack/prepare.sh
+    rm -rf internal/controller/cluster/null
+    rm -rf internal/controller/namespaced/null
     runHook postConfigure
   '';
 
