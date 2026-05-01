@@ -1,8 +1,14 @@
 {
   perSystem =
-    { inputs', pkgs, ... }:
+    {
+      inputs',
+      pkgs,
+      self',
+      ...
+    }:
     let
       inherit (pkgs) callPackage;
+      inherit (self'.legacyPackages) buildUpjetProvider;
       inherit (inputs'.gomod2nix.legacyPackages) buildGoApplication;
 
       aspire-cli = callPackage ./aspire-cli { };
@@ -13,6 +19,7 @@
       omnissa-horizon-client = callPackage ./omnissa-horizon-client { };
       openshift-installer = callPackage ./openshift-installer { inherit buildGoApplication; };
       smarter-device-manager = callPackage ./smarter-device-manager { inherit buildGoApplication; };
+      upjet-provider-cloudflare = callPackage ./upjet-provider-cloudflare { inherit buildUpjetProvider; };
     in
     {
       packages = {
@@ -25,6 +32,7 @@
           omnissa-horizon-client
           openshift-installer
           smarter-device-manager
+          upjet-provider-cloudflare
           ;
       };
 

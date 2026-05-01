@@ -32,6 +32,8 @@
         inputs.treefmt-nix.flakeModule
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         inputs.flake-parts.flakeModules.easyOverlay
+
+        ./builders
         ./packages
       ];
 
@@ -56,9 +58,7 @@
         {
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
-
             config.allowUnfree = true;
-
             overlays = with inputs; [
               gomod2nix.overlays.default
               nil.overlays.default
@@ -82,6 +82,7 @@
               nil
               nixfmt
               nurl
+              watchexec
             ];
           };
 

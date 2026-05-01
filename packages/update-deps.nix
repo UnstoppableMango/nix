@@ -1,10 +1,18 @@
-{ pkgs, src }:
+{
+  gomod2nix,
+  writeShellApplication,
+  src,
+  ...
+}:
+writeShellApplication {
+  name = "update-deps";
 
-pkgs.writeShellScript "update-deps" ''
-  dir="$(${pkgs.coreutils}/bin/mktemp -d)"
-  trap '${pkgs.coreutils}/bin/rm -rf "$dir"' EXIT
-  ${pkgs.gomod2nix}/bin/gomod2nix generate \
-    --dir "${src}" \
-    --outdir "$dir"
-  ${pkgs.coreutils}/bin/cp "$dir/gomod2nix.toml" "$1"
-''
+  runtimeInputs = [ gomod2nix ];
+
+  text = ''
+    dir="$(mktemp -d)"
+    trap 'rm -rf "$dir"' EXIT
+    gomod2nix generate --dir ${src} --outdir "$dir"
+    cp "$dir/gomod2nix.toml" "$1"
+  '';
+}
