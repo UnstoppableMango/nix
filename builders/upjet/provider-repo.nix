@@ -1,8 +1,8 @@
 {
+  bash,
   crdRootGroup ? "crossplane.io",
   fetchFromGitHub,
   git,
-  go,
   lib,
   pname ? "upjet-provider-${providerNameLower}",
   providerName,
@@ -25,12 +25,6 @@ let
     rev = "96440083ef6ed070d9413436a9d6a40000d6773f";
     hash = "sha256-OhXPzgzaXmaWsgFow1wocyMoFY4Apb7Lj552I248l50=";
     fetchSubmodules = true;
-  };
-
-  modded = import ../go/mod-edit-require.nix {
-    inherit go lib src stdenvNoCC;
-    path = lib.strings.removePrefix "https://" terraformProviderRepo;
-    version = "v${terraformProviderVersion}";
   };
 in
 stdenvNoCC.mkDerivation {
@@ -55,14 +49,17 @@ stdenvNoCC.mkDerivation {
 
   configurePhase = ''
     runHook preConfigure
+
     hack/prepare.sh
     rm -rf internal/controller/cluster/null
     rm -rf internal/controller/namespaced/null
+
     runHook postConfigure
   '';
 
   buildPhase = ''
     runHook preBuild
+
     substituteInPlace Makefile \
       --subst-var-by 'TERRAFORM_PROVIDER_SOURCE' '${terraformProviderSource}' \
       --subst-var-by 'TERRAFORM_PROVIDER_REPO' '${terraformProviderRepo}' \
@@ -70,6 +67,10 @@ stdenvNoCC.mkDerivation {
       --subst-var-by 'TERRAFORM_PROVIDER_DOWNLOAD_NAME' '${terraformProviderDownloadName}' \
       --subst-var-by 'TERRAFORM_NATIVE_PROVIDER_BINARY' '${terraformNativeProviderBinary}' \
       --subst-var-by 'TERRAFORM_DOCS_PATH' '${terraformDocsPath}'
+
+    substituteInPlace build/makelib/common.mk \
+      --replace '/usr/bin/env bash' '${bash}/bin/bash'
+
     runHook postBuild
   '';
 

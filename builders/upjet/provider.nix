@@ -2,10 +2,13 @@
   buildGoApplication,
   buildUpjetProviderRepo,
   coreutils,
-  externalNames ? { },
+  curlMinimal,
+  git,
   gnumake,
   gotools,
+  inetutils,
   modules,
+  terraform,
   pname,
   version,
   ...
@@ -23,7 +26,15 @@ buildGoApplication {
 
   inherit (src) passthru;
 
-  nativeBuildInputs = [ coreutils gnumake gotools ];
+  nativeBuildInputs = [
+    coreutils
+    curlMinimal
+    git
+    gnumake
+    gotools
+    inetutils
+    terraform
+  ];
 
   preBuild = ''
     sed -i '8,10d;36d;60d' config/provider.go
