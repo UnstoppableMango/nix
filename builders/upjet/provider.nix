@@ -43,6 +43,7 @@ buildGoApplication {
     sed -i '12d;20d;34d' internal/controller/cluster/zz_setup.go
     sed -i '12d;20d;34d' internal/controller/namespaced/zz_setup.go
 
-    make generate
+    # TODO
+    # make generate
   '';
 }
