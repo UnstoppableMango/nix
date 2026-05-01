@@ -19,7 +19,7 @@ buildUpjetProvider {
   modules = ./gomod2nix.toml;
 
   meta = with lib; {
-    description = "TODO";
+    description = "Upjet-based Cloudflare provider generated from the Terraform Cloudflare provider";
     homepage = "https://github.com/UnstoppableMango/nix";
     license = licenses.asl20;
     maintainers = with maintainers; [ UnstoppableMango ];
