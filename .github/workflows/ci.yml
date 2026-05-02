@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   build:
@@ -25,10 +25,12 @@ jobs:
 
       - run: nix flake check
 
-      - run: >
-          nix build
-          .#chart-releaser
-          .#kubectl-get-all
-          .#kubectl-get-resources
-          .#mmake
-          .#openshift-installer
+      - run: |
+          nix build \
+            .#chart-releaser \
+            .#kubectl-get-all \
+            .#kubectl-get-resources \
+            .#mmake .#openshift-installer
+
+  copilot-setup-steps:
+    runs-on: dotfiles-runners
