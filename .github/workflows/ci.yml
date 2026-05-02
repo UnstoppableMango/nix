@@ -33,4 +33,4 @@ jobs:
             .#mmake .#openshift-installer
 
   copilot-setup-steps:
-    runs-on: dotfiles-runners
+    runs-on: nix-runners
