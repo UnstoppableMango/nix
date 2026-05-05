@@ -1,4 +1,6 @@
 {
+  imports = [ ./kube-vip ];
+
   perSystem =
     {
       inputs',
@@ -13,8 +15,6 @@
 
       aspire-cli = callPackage ./aspire-cli { };
       chart-releaser = callPackage ./chart-releaser { inherit buildGoApplication; };
-      kubeVipPackages = callPackage ./kube-vip { inherit buildGoApplication; };
-      kube-vip = kubeVipPackages.kube-vip;
       kubectl-get-all = callPackage ./kubectl-get-all { inherit buildGoApplication; };
       kubectl-get-resources = callPackage ./kubectl-get-resources { inherit buildGoApplication; };
       mmake = callPackage ./mmake { inherit buildGoApplication; };
@@ -24,13 +24,10 @@
       upjet-provider-cloudflare = callPackage ./upjet-provider-cloudflare { inherit buildUpjetProvider; };
     in
     {
-      legacyPackages = { inherit kubeVipPackages; };
-
       packages = {
         inherit
           aspire-cli
           chart-releaser
-          kube-vip
           kubectl-get-all
           kubectl-get-resources
           mmake

@@ -1,6 +1,15 @@
-{ nix2container, kube-vip, ... }:
+{
+  cacert,
+  nix2container,
+  kube-vip,
+  ...
+}:
 nix2container.buildImage {
   name = "kube-vip";
   tag = "latest";
-  copyToRoot = [ kube-vip ];
+  copyToRoot = [ cacert ];
+
+  config = {
+    entrypoint = [ "${kube-vip}/bin/kube-vip" ];
+  };
 }
