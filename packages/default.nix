@@ -13,6 +13,7 @@
 
       aspire-cli = callPackage ./aspire-cli { };
       chart-releaser = callPackage ./chart-releaser { inherit buildGoApplication; };
+      kube-vip = callPackage ./kube-vip { inherit buildGoApplication; };
       kubectl-get-all = callPackage ./kubectl-get-all { inherit buildGoApplication; };
       kubectl-get-resources = callPackage ./kubectl-get-resources { inherit buildGoApplication; };
       mmake = callPackage ./mmake { inherit buildGoApplication; };
@@ -26,6 +27,7 @@
         inherit
           aspire-cli
           chart-releaser
+          kube-vip
           kubectl-get-all
           kubectl-get-resources
           mmake
