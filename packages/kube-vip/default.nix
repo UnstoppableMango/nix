@@ -1,7 +1,6 @@
 {
   callPackage,
   fetchFromGitHub,
-  stdenvNoCC,
   ...
 }:
 let
@@ -13,13 +12,6 @@ let
     hash = "sha256-vH9fiFInTu2NnC2jLrZUpjaxUxcQuwgvCyl9jlU+UqU=";
   };
 in
-stdenvNoCC.mkDerivation {
-  pname = "kubeVipPackages";
-  inherit version src;
-
-  packages = {
-    kube-vip = callPackage ./main.nix {
-      inherit src version;
-    };
-  };
+{
+  kube-vip = callPackage ./main.nix { inherit src version; };
 }
