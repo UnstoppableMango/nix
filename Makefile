@@ -1,5 +1,5 @@
 CS_PKGS  := aspire-cli
-GO_PKGS  := chart-releaser kubectl-get-resources mmake openshift-installer smarter-device-manager upjet-provider-cloudflare
+GO_PKGS  := chart-releaser kube-vip kubectl-get-resources mmake openshift-installer smarter-device-manager upjet-provider-cloudflare
 ALL_PKGS := ${CS_PKGS} ${GO_PKGS} omnissa-horizon-client
 
 check:

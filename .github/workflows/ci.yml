@@ -28,6 +28,7 @@ jobs:
       - run: |
           nix build \
             .#chart-releaser \
+            .#kube-vip \
             .#kubectl-get-all \
             .#kubectl-get-resources \
             .#mmake \
