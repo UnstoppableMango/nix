@@ -3,17 +3,28 @@
     { inputs', pkgs, ... }:
     let
       inherit (inputs'.gomod2nix.legacyPackages) buildGoApplication gomod2nix;
+      inherit (pkgs) callPackage;
 
-      buildUpjetProviderRepo =
-        args: pkgs.callPackage ./provider-repo.nix ({ inherit gomod2nix; } // args);
+      buildProviderRepo = args: callPackage ./provider-repo.nix ({ inherit gomod2nix; } // args);
 
-      buildUpjetProvider =
+      buildProvider =
         args:
-        pkgs.callPackage ./provider.nix ({ inherit buildGoApplication buildUpjetProviderRepo; } // args);
+        callPackage ./provider.nix (
+          {
+            inherit buildGoApplication;
+            buildUpjetProviderRepo = buildProviderRepo;
+          }
+          // args
+        );
+
+      upjetTools = {
+        inherit buildProviderRepo buildProvider;
+      };
     in
     {
       legacyPackages = {
-        inherit buildUpjetProviderRepo buildUpjetProvider;
+        buildUpjetProvider = upjetTools.buildProvider;
+        buildUpjetProviderRepo = upjetTools.buildProviderRepo;
       };
     };
 }
