@@ -11,7 +11,10 @@ let
     rev = "v${version}";
     hash = "sha256-vH9fiFInTu2NnC2jLrZUpjaxUxcQuwgvCyl9jlU+UqU=";
   };
+
+  kube-vip = callPackage ./main.nix { inherit src version; };
+  container = callPackage ./container.nix { inherit kube-vip; };
 in
 {
-  kube-vip = callPackage ./main.nix { inherit src version; };
+  inherit kube-vip container;
 }

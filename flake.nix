@@ -33,10 +33,10 @@
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
 
-      imports = [
-        inputs.treefmt-nix.flakeModule
+      imports = with inputs; [
+        treefmt-nix.flakeModule
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
-        inputs.flake-parts.flakeModules.easyOverlay
+        flake-parts.flakeModules.easyOverlay
 
         ./builders
         ./packages
@@ -55,6 +55,7 @@
 
       perSystem =
         {
+          inputs',
           pkgs,
           system,
           config,
@@ -67,12 +68,16 @@
             overlays = with inputs; [
               gomod2nix.overlays.default
               nil.overlays.default
+              (final: prev: {
+                inherit (inputs'.nix2container.packages) nix2container;
+              })
             ];
           };
 
           overlayAttrs = {
             inherit (config.packages)
               chart-releaser
+              kube-vip
               kubectl-get-all
               kubectl-get-resources
               mmake
