@@ -2,51 +2,38 @@
   perSystem =
     {
       inputs',
-      pkgs,
       self',
+      pkgs,
       ...
     }:
     let
-      inherit (pkgs) callPackage;
-      inherit (self'.legacyPackages) buildUpjetProvider;
-      inherit (inputs'.gomod2nix.legacyPackages) buildGoApplication;
+      callPackage = pkgs.lib.callPackageWith (
+        { inherit (self'.legacyPackages) upjetTools kubeVipTools; } // legacyPackages // pkgs
+      );
 
-      aspire-cli = callPackage ./aspire-cli { };
-      chart-releaser = callPackage ./chart-releaser { inherit buildGoApplication; };
-      kubeVipPackages = callPackage ./kube-vip { inherit buildGoApplication; };
-      kube-vip = kubeVipPackages.kube-vip;
-      kubectl-get-all = callPackage ./kubectl-get-all { inherit buildGoApplication; };
-      kubectl-get-resources = callPackage ./kubectl-get-resources { inherit buildGoApplication; };
-      mmake = callPackage ./mmake { inherit buildGoApplication; };
-      omnissa-horizon-client = callPackage ./omnissa-horizon-client { };
-      openshift-installer = callPackage ./openshift-installer { inherit buildGoApplication; };
-      smarter-device-manager = callPackage ./smarter-device-manager { inherit buildGoApplication; };
-      upjet-provider-cloudflare = callPackage ./upjet-provider-cloudflare { inherit buildUpjetProvider; };
-    in
-    {
-      legacyPackages = { inherit kubeVipPackages; };
+      kubeVipPackages = callPackage ./kube-vip { };
 
       packages = {
-        inherit
-          aspire-cli
-          chart-releaser
-          kube-vip
-          kubectl-get-all
-          kubectl-get-resources
-          mmake
-          omnissa-horizon-client
-          openshift-installer
-          smarter-device-manager
-          upjet-provider-cloudflare
-          ;
+        inherit (kubeVipPackages) kube-vip;
+
+        aspire-cli = callPackage ./aspire-cli { };
+        chart-releaser = callPackage ./chart-releaser { };
+        kubectl-get-all = callPackage ./kubectl-get-all { };
+        kubectl-get-resources = callPackage ./kubectl-get-resources { };
+        mmake = callPackage ./mmake { };
+        omnissa-horizon-client = callPackage ./omnissa-horizon-client { };
+        openshift-installer = callPackage ./openshift-installer { };
+        smarter-device-manager = callPackage ./smarter-device-manager { };
+        upjet-provider-cloudflare = callPackage ./upjet-provider-cloudflare { };
       };
 
-      apps = {
-        aspire-cli = {
-          type = "app";
-          meta.description = "A CLI tool for managing Aspire projects";
-          program = "${aspire-cli}/bin/aspire";
-        };
-      };
+      legacyPackages = {
+        inherit (inputs'.gomod2nix.legacyPackages) buildGoApplication gomod2nix;
+        inherit kubeVipPackages;
+      }
+      // packages;
+    in
+    {
+      inherit legacyPackages packages;
     };
 }

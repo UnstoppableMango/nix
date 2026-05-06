@@ -1,17 +1,20 @@
 {
   callPackage,
-  fetchFromGitHub,
+  kubeVipTools,
   ...
 }:
 let
   version = "1.1.2";
-  src = fetchFromGitHub {
-    owner = "kube-vip";
-    repo = "kube-vip";
+  src = callPackage kubeVipTools.src {
     rev = "v${version}";
     hash = "sha256-vH9fiFInTu2NnC2jLrZUpjaxUxcQuwgvCyl9jlU+UqU=";
   };
 in
 {
   kube-vip = callPackage ./main.nix { inherit src version; };
+  manifest = callPackage ./manifest.nix {
+    inherit kubeVipTools;
+    address = "testing";
+    interface = "eth0";
+  };
 }

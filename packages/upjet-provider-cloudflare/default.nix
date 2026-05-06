@@ -1,5 +1,5 @@
 {
-  buildUpjetProvider,
+  upjetTools,
   lib,
   ...
 }:
@@ -7,7 +7,7 @@ let
   pname = "upjet-provider-cloudflare";
   version = "0.0.1";
 in
-buildUpjetProvider {
+upjetTools.buildProvider {
   inherit pname version;
 
   organizationName = "cloudflare";

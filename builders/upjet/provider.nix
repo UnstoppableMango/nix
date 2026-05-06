@@ -1,6 +1,6 @@
 {
   buildGoApplication,
-  buildUpjetProviderRepo,
+  upjetTools,
   coreutils,
   curlMinimal,
   git,
@@ -14,17 +14,18 @@
   ...
 }@attrs:
 let
-  src = buildUpjetProviderRepo ({ inherit pname version; } // attrs);
+  repo = upjetTools.buildProviderRepo ({ inherit pname version; } // attrs);
 in
 buildGoApplication {
   inherit
     pname
     version
     modules
-    src
+    repo
     ;
 
-  inherit (src) passthru;
+  inherit (repo) passthru;
+  src = repo;
 
   nativeBuildInputs = [
     coreutils

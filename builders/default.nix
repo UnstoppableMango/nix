@@ -1,3 +1,6 @@
 {
-  imports = [ ./upjet ];
+  imports = [
+    ./kube-vip
+    ./upjet
+  ];
 }
