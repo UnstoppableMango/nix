@@ -12,9 +12,4 @@ let
 in
 {
   kube-vip = callPackage ./main.nix { inherit src version; };
-  manifest = callPackage ./manifest.nix {
-    inherit kubeVipTools;
-    address = "testing";
-    interface = "eth0";
-  };
 }
