@@ -1,6 +1,5 @@
 {
   buildGoApplication,
-  callPackage,
   coreutils,
   fetchFromGitHub,
   git,
@@ -9,6 +8,7 @@
   kubernetes-helm,
   lib,
   makeWrapper,
+  mangoTools,
   yamale,
   yamllint,
 }:
@@ -64,7 +64,7 @@ buildGoApplication {
     }
   '';
 
-  passthru.update-deps = callPackage ../update-deps.nix { inherit src; };
+  passthru.update-deps = mangoTools.mkUpdateDeps src;
 
   meta = with lib; {
     description = "Hosting Helm Charts via GitHub Pages and Releases";

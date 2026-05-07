@@ -4,6 +4,7 @@
   fetchFromGitHub,
   git,
   lib,
+  mangoTools,
   pname ? "upjet-provider-${providerNameLower}",
   providerName,
   providerNameLower ? lib.strings.toLower providerName,
@@ -17,7 +18,7 @@
   terraformDocsPath ? "docs/resources",
   version,
   ...
-}@attrs:
+}:
 let
   src = fetchFromGitHub {
     owner = "crossplane";
@@ -78,7 +79,5 @@ stdenvNoCC.mkDerivation {
     cp -r . $out
   '';
 
-  passthru.update-deps = import ../../packages/update-deps.nix ({ inherit src; } // attrs);
-
-  meta = attrs.meta;
+  passthru.update-deps = mangoTools.updateDeps src;
 }

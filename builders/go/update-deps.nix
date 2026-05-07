@@ -2,7 +2,6 @@
   gomod2nix,
   writeShellApplication,
   src,
-  ...
 }:
 writeShellApplication {
   name = "update-deps";

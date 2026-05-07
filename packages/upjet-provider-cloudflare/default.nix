@@ -1,8 +1,4 @@
-{
-  upjetTools,
-  lib,
-  ...
-}:
+{ upjetTools, lib }:
 let
   pname = "upjet-provider-cloudflare";
   version = "0.0.1";
@@ -18,12 +14,12 @@ upjetTools.buildProvider {
 
   modules = ./gomod2nix.toml;
 
-  meta = with lib; {
+  meta = {
     description = "Upjet-based Cloudflare provider generated from the Terraform Cloudflare provider";
     homepage = "https://github.com/UnstoppableMango/nix";
-    license = licenses.asl20;
-    maintainers = with maintainers; [ UnstoppableMango ];
+    license = lib.licenses.asl20;
+    maintainers = with lib.maintainers; [ UnstoppableMango ];
     mainProgram = "upjet-provider-cloudflare";
-    platforms = platforms.linux;
+    platforms = lib.platforms.linux;
   };
 }
