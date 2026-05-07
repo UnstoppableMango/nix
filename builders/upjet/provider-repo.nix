@@ -32,9 +32,7 @@ stdenvNoCC.mkDerivation {
   # https://github.com/crossplane/upjet/blob/main/docs/generating-a-provider.md
   inherit pname version src;
 
-  # src = modded;
   patches = [ ./Makefile.patch ];
-
   nativeBuildInputs = [ git ];
 
   PROVIDER_NAME_LOWER = providerNameLower;

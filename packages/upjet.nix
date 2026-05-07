@@ -11,7 +11,6 @@
 
       packages = {
         inherit (self'.legacyPackages) mangoTools upjetTools;
-
         upjet-provider-cloudflare = callPackage ./upjet-provider-cloudflare { };
       };
     in
