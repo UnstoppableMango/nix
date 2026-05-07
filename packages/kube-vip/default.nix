@@ -1,4 +1,5 @@
 {
+  buildGoApplication,
   callPackage,
   kubeVipTools,
   ...
@@ -11,5 +12,12 @@ let
   };
 in
 {
-  kube-vip = callPackage ./main.nix { inherit src version; };
+  kube-vip = callPackage ./main.nix {
+    inherit
+      src
+      version
+      buildGoApplication
+      kubeVipTools
+      ;
+  };
 }

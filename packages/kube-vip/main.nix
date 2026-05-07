@@ -1,6 +1,7 @@
 {
   buildGoApplication,
   callPackage,
+  kubeVipTools,
   lib,
   src,
   version,
@@ -21,6 +22,11 @@ buildGoApplication {
   ];
 
   passthru.update-deps = callPackage ../update-deps.nix { inherit src; };
+
+  passthru.example-static-pod = callPackage kubeVipTools.manifestPod {
+    address = "192.168.0.1";
+    interface = "eth0";
+  };
 
   meta = with lib; {
     description = "Kube-VIP: Virtual IP for Kubernetes clusters";
