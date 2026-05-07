@@ -2,8 +2,9 @@
   buildGoApplication,
   callPackage,
   fetchFromGitHub,
-  makeWrapper,
   lib,
+  makeWrapper,
+  mangoTools,
 }:
 let
   pname = "smarter-device-manager";
@@ -18,8 +19,8 @@ in
 buildGoApplication {
   inherit pname version;
 
+  # src = modded;
   modules = ./gomod2nix.toml;
-
   nativeBuildInputs = [ makeWrapper ];
 
   postInstall = ''
@@ -28,6 +29,7 @@ buildGoApplication {
       --add-flags "-config $out/share/${pname}/conf.yaml"
   '';
 
+  passthru.go-mod-patch = mangoTools.modInit src "arm.com/smarter-device-management";
   passthru.update-deps = callPackage ./update-deps.nix { inherit src; };
 
   meta = with lib; {
