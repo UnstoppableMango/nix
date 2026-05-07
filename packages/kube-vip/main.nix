@@ -30,11 +30,6 @@ buildGoApplication {
 
   passthru.update-deps = mangoTools.mkUpdateDeps src;
 
-  # passthru.example-static-pod = kubeVipTools.manifestPod {
-  #   address = "192.168.0.1";
-  #   interface = "eth0";
-  # };
-
   meta = with lib; {
     description = "Kube-VIP: Virtual IP for Kubernetes clusters";
     homepage = "https://github.com/kube-vip/kube-vip";
