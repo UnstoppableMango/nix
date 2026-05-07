@@ -1,13 +1,11 @@
 {
   callPackage,
-  fetchFromGitHub,
+  kubeVipTools,
   ...
 }:
 let
   version = "1.1.2";
-  src = fetchFromGitHub {
-    owner = "kube-vip";
-    repo = "kube-vip";
+  src = callPackage kubeVipTools.src {
     rev = "v${version}";
     hash = "sha256-vH9fiFInTu2NnC2jLrZUpjaxUxcQuwgvCyl9jlU+UqU=";
   };
