@@ -5,7 +5,6 @@
   fetchFromGitHub,
   lib,
   makeWrapper,
-  mangoTools,
 }:
 let
   pname = "smarter-device-manager";
