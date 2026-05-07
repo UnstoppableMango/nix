@@ -16,9 +16,12 @@
   ...
 }@attrs:
 let
-  repo = buildProviderRepo (attrs // {
-    inherit pname version;
-  });
+  repo = buildProviderRepo (
+    {
+      inherit pname version;
+    }
+    // attrs
+  );
 in
 buildGoApplication {
   inherit
