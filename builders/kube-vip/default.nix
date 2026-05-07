@@ -9,14 +9,11 @@
         src = callPackage ./src.nix;
       };
 
-      legacyPackages = {
-        inherit kubeVipTools;
-        kubeVipManifestPod = kubeVipTools.manifestPod;
-      };
+      legacyPackages = { inherit kubeVipTools; };
 
       packages = {
-        inherit (legacyPackages) kubeVipTools;
         inherit (self'.legacyPackages.kubeVipPackages) kube-vip;
+        inherit kubeVipTools;
       };
     in
     {
