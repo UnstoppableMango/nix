@@ -12,7 +12,10 @@
         example-manifest = kubeVipTools.manifestPod {
           address = "192.168.0.1";
           interface = "eth0";
-          extraArgs = [ "--arp" "--wireguard" ];
+          extraArgs = [
+            "--arp"
+            "--wireguard"
+          ];
         };
       };
     in
