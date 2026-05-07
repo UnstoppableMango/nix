@@ -4,6 +4,7 @@
   fetchFromGitHub,
   git,
   lib,
+  mangoTools,
   pname ? "upjet-provider-${providerNameLower}",
   providerName,
   providerNameLower ? lib.strings.toLower providerName,
@@ -17,7 +18,7 @@
   terraformDocsPath ? "docs/resources",
   version,
   ...
-}@attrs:
+}:
 let
   src = fetchFromGitHub {
     owner = "crossplane";
@@ -31,9 +32,7 @@ stdenvNoCC.mkDerivation {
   # https://github.com/crossplane/upjet/blob/main/docs/generating-a-provider.md
   inherit pname version src;
 
-  # src = modded;
   patches = [ ./Makefile.patch ];
-
   nativeBuildInputs = [ git ];
 
   PROVIDER_NAME_LOWER = providerNameLower;
@@ -78,7 +77,5 @@ stdenvNoCC.mkDerivation {
     cp -r . $out
   '';
 
-  passthru.update-deps = import ../../packages/update-deps.nix ({ inherit src; } // attrs);
-
-  meta = attrs.meta;
+  passthru.update-deps = mangoTools.updateDeps src;
 }

@@ -1,5 +1,5 @@
 CS_PKGS  := aspire-cli
-GO_PKGS  := chart-releaser kube-vip kubectl-get-resources mmake openshift-installer smarter-device-manager upjet-provider-cloudflare
+GO_PKGS  := chart-releaser kube-vip kubectl-get-all kubectl-get-resources mmake openshift-installer smarter-device-manager upjet-provider-cloudflare
 ALL_PKGS := ${CS_PKGS} ${GO_PKGS} omnissa-horizon-client
 
 check:
@@ -19,6 +19,9 @@ packages/%/deps.json: packages/%/default.nix
 
 packages/%/gomod2nix.toml: packages/%/default.nix packages/update-deps.nix
 	"$$(nix build .#$*.update-deps --print-out-paths --no-substitute)/bin/update-deps" ${CURDIR}/$@
+
+packages/%/gomod.patch: packages/%/default.nix
+	"$$(nix build .#$*.go-mod-patch --print-out-paths --no-substitute)/bin/go-mod-init" > $@
 
 .vscode/settings.json: hack/vscode.json
 	mkdir -p ${@D} && cp $< $@

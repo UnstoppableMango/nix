@@ -1,11 +1,18 @@
 {
   buildGoApplication,
-  callPackage,
-  kubeVipTools,
+  fetchFromGitHub,
+  mangoTools,
   lib,
-  src,
-  version,
 }:
+let
+  version = "1.1.2";
+  src = fetchFromGitHub {
+    owner = "kube-vip";
+    repo = "kube-vip";
+    rev = "v${version}";
+    hash = "sha256-vH9fiFInTu2NnC2jLrZUpjaxUxcQuwgvCyl9jlU+UqU=";
+  };
+in
 buildGoApplication {
   pname = "kube-vip";
   inherit version src;
@@ -21,12 +28,12 @@ buildGoApplication {
     "-extldflags -static"
   ];
 
-  passthru.update-deps = callPackage ../update-deps.nix { inherit src; };
+  passthru.update-deps = mangoTools.mkUpdateDeps src;
 
-  passthru.example-static-pod = callPackage kubeVipTools.manifestPod {
-    address = "192.168.0.1";
-    interface = "eth0";
-  };
+  # passthru.example-static-pod = kubeVipTools.manifestPod {
+  #   address = "192.168.0.1";
+  #   interface = "eth0";
+  # };
 
   meta = with lib; {
     description = "Kube-VIP: Virtual IP for Kubernetes clusters";

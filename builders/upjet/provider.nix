@@ -1,12 +1,14 @@
 {
   buildGoApplication,
-  upjetTools,
+  buildProviderRepo,
+  lib,
   coreutils,
   curlMinimal,
   git,
   gnumake,
   gotools,
   inetutils,
+  mangoTools,
   modules,
   terraform,
   pname,
@@ -14,17 +16,21 @@
   ...
 }@attrs:
 let
-  repo = upjetTools.buildProviderRepo ({ inherit pname version; } // attrs);
+  repo = buildProviderRepo (
+    {
+      inherit pname version;
+    }
+    // attrs
+  );
 in
 buildGoApplication {
   inherit
     pname
     version
     modules
-    repo
     ;
 
-  inherit (repo) passthru;
+  passthru.update-deps = mangoTools.updateDeps repo;
   src = repo;
 
   nativeBuildInputs = [
