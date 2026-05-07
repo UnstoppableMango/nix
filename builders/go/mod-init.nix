@@ -4,28 +4,20 @@
   modulePath,
   name ? "go-mod-init",
   src,
-  writeShellApplication,
+  writeShellScript,
 }:
-writeShellApplication {
-  inherit name;
+writeShellScript name ''
+  dir="$(mktemp -d)"
+  cp -r ${src}/. "$dir/"
 
-  runtimeInputs = [
-    go
-    gitMinimal
-  ];
+  cd "$dir"
+  ${gitMinimal}/bin/git init --initial-branch=main --quiet
+  ${gitMinimal}/bin/git add .
+  ${gitMinimal}/bin/git commit -m 'init' --quiet
 
-  text = ''
-    dir="$(mktemp -d)"
-    cp -r ${src}/. "$dir/"
+  ${go}/bin/go mod init '${modulePath}' >/dev/null 2>&1
+  ${go}/bin/go mod tidy >/dev/null 2>&1
+  ${gitMinimal}/bin/git add .
 
-    git -C "$dir" init --initial-branch=main
-    git -C "$dir" add .
-    git -C "$dir" commit -m 'init'
-
-    go -C "$dir" mod init '${modulePath}'
-    go -C "$dir" mod tidy
-    git -C "$dir" add .
-
-    git -C "$dir" diff -p --cached >"$1"
-  '';
-}
+  ${gitMinimal}/bin/git --no-pager diff -p --cached
+''

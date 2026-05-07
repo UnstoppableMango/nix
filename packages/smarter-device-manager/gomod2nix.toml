@@ -2,8 +2,8 @@ schema = 3
 
 [mod]
   [mod.'github.com/fsnotify/fsnotify']
-    version = 'v1.9.0'
-    hash = 'sha256-WtpE1N6dpHwEvIub7Xp/CrWm0fd6PX7MKA4PV44rp2g='
+    version = 'v1.10.1'
+    hash = 'sha256-6LBLgsh4nKkMpgRKVsYFEaGDSU1fncBcWVSjKBdfgjU='
 
   [mod.'github.com/golang/glog']
     version = 'v1.2.5'
@@ -22,12 +22,12 @@ schema = 3
     hash = 'sha256-/0t9C6Mc8kYjxweFB0us2lGKo8GovHhBiq5nlMOppC0='
 
   [mod.'google.golang.org/genproto/googleapis/rpc']
-    version = 'v0.0.0-20260128011058-8636f8732409'
-    hash = 'sha256-gdgUw1LzgVOrarF1cGBUI9uoaR/d6lur2RwxUDKnOZA='
+    version = 'v0.0.0-20260226221140-a57be14db171'
+    hash = 'sha256-pnGJ+eFKWgDoT8oYp88FEOaafs+WJe3vsZHyZLSj5pU='
 
   [mod.'google.golang.org/grpc']
-    version = 'v1.80.0'
-    hash = 'sha256-+p50KGJvGWdpB/4f0h477dCAfoOL5m2PzG8BGOekVgY='
+    version = 'v1.81.0'
+    hash = 'sha256-rOzEF03TwRZF/rQnqNzxWqQnrd0BKNFmAUwb0Kkt+10='
 
   [mod.'google.golang.org/protobuf']
     version = 'v1.36.12-0.20260120151049-f2248ac996af'

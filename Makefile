@@ -17,11 +17,12 @@ deps: ${CS_PKGS:%=packages/%/deps.json} ${GO_PKGS:%=packages/%/gomod2nix.toml}
 packages/%/deps.json: packages/%/default.nix
 	"$$(nix build .#$*.fetch-deps --print-out-paths)" ${CURDIR}/$@
 
-packages/%/gomod2nix.toml: packages/%/default.nix packages/update-deps.nix
-	"$$(nix build .#$*.update-deps --print-out-paths --no-substitute)/bin/update-deps" ${CURDIR}/$@
+packages/smarter-device-manager/gomod2nix.toml: packages/smarter-device-manager/gomod.patch
+packages/%/gomod2nix.toml: packages/%/default.nix packages/%/update-deps.nix
+	"$$(nix build .#$*.update-deps --print-out-paths --no-substitute)" ${CURDIR}/$@
 
 packages/%/gomod.patch: packages/%/default.nix
-	"$$(nix build .#$*.go-mod-patch --print-out-paths --no-substitute)/bin/go-mod-init" > $@
+	"$$(nix build .#$*.go-mod-patch --print-out-paths --no-substitute)" >$@
 
 .vscode/settings.json: hack/vscode.json
 	mkdir -p ${@D} && cp $< $@

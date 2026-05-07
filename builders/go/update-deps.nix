@@ -1,17 +1,15 @@
 {
   gomod2nix,
-  writeShellApplication,
+  writeShellScript,
   src,
 }:
-writeShellApplication {
-  name = "update-deps";
+writeShellScript "update-deps" ''
+  dir="$(mktemp -d)"
+  trap 'rm -rf "$dir"' EXIT
 
-  runtimeInputs = [ gomod2nix ];
+  ${gomod2nix}/bin/gomod2nix generate \
+    --dir ${src} \
+    --outdir "$dir"
 
-  text = ''
-    dir="$(mktemp -d)"
-    trap 'rm -rf "$dir"' EXIT
-    gomod2nix generate --dir ${src} --outdir "$dir"
-    cp "$dir/gomod2nix.toml" "$1"
-  '';
-}
+  cp "$dir/gomod2nix.toml" "$1"
+''
