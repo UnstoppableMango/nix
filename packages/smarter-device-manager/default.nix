@@ -47,7 +47,11 @@ buildGoApplication {
       --add-flags "-config $out/share/${pname}/conf.yaml"
   '';
 
-  passthru.go-mod-patch = mangoTools.modInit gitSrc "arm.com/smarter-device-management";
+  passthru.go-mod-patch = callPackage ./gomod-patch.nix {
+    modulePath = "arm.com/smarter-device-management";
+    src = gitSrc;
+  };
+
   passthru.update-deps = callPackage ./update-deps.nix { inherit src; };
 
   meta = with lib; {
