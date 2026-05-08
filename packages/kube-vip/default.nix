@@ -1,6 +1,11 @@
 {
   perSystem =
-    { inputs', self', pkgs, ... }:
+    {
+      inputs',
+      self',
+      pkgs,
+      ...
+    }:
     let
       inherit (self'.legacyPackages) kubeVipTools;
       callPackage = pkgs.lib.callPackageWith (packages // pkgs);

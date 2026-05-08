@@ -1,6 +1,11 @@
 {
   perSystem =
-    { inputs', self', pkgs, ... }:
+    {
+      inputs',
+      self',
+      pkgs,
+      ...
+    }:
     let
       callPackage = pkgs.lib.callPackageWith (packages // pkgs);
 
