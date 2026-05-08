@@ -1,6 +1,7 @@
 {
   perSystem =
     {
+      inputs',
       self',
       pkgs,
       lib,
@@ -11,6 +12,7 @@
 
       packages = {
         inherit (self'.legacyPackages) mangoTools;
+        inherit (inputs'.gomod2nix.legacyPackages) buildGoApplication;
 
         chart-releaser = callPackage ./chart-releaser { };
         kubectl-get-all = callPackage ./kubectl-get-all { };
