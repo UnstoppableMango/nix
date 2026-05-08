@@ -30,7 +30,7 @@ buildGoApplication {
     modules
     ;
 
-  passthru.update-deps = mangoTools.updateDeps repo;
+  passthru.update-deps = mangoTools.mkUpdateDeps repo;
   src = repo;
 
   nativeBuildInputs = [

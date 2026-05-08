@@ -1,6 +1,4 @@
 {
-  imports = [ ./kube-vip ];
-
   perSystem =
     {
       pkgs,

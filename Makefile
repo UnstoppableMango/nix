@@ -21,7 +21,7 @@ packages/%/gomod2nix.toml: packages/%/default.nix packages/update-deps.nix
 	"$$(nix build .#$*.update-deps --print-out-paths --no-substitute)/bin/update-deps" ${CURDIR}/$@
 
 packages/%/gomod.patch: packages/%/default.nix
-	"$$(nix build .#$*.go-mod-patch --print-out-paths --no-substitute)/bin/go-mod-init" > $@
+	"$$(nix build .#$*.go-mod-patch --print-out-paths --no-substitute)/bin/go-mod-init" >${CURDIR}/$@
 
 .vscode/settings.json: hack/vscode.json
 	mkdir -p ${@D} && cp $< $@
