@@ -1,12 +1,18 @@
 {
   perSystem =
-    { self', pkgs, ... }:
+    {
+      inputs',
+      self',
+      pkgs,
+      ...
+    }:
     let
       inherit (self'.legacyPackages) kubeVipTools;
       callPackage = pkgs.lib.callPackageWith (packages // pkgs);
 
       packages = {
         inherit (self'.legacyPackages) mangoTools;
+        inherit (inputs'.gomod2nix.legacyPackages) buildGoApplication;
 
         kube-vip = callPackage ./main.nix { };
         example-manifest = kubeVipTools.manifestPod {
