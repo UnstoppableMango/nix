@@ -14,6 +14,9 @@
         inherit (inputs'.gomod2nix.legacyPackages) buildGoApplication;
 
         build = callPackage ./build.nix;
+        buildBin = (callPackage ./build.nix).overrideAttrs (attrs: {
+          output = "$out/bin/${attrs.pname}.binpb";
+        });
       };
     in
     {

@@ -1,23 +1,15 @@
 {
   buf ? pkgs.buf,
+  flags ? [ ],
+  lib,
+  output ? "$out/${pname}.binpb",
   pkgs,
   pname,
-  output ? "bin/${pname}.binpb",
-  version,
+  runCommand,
   src,
-  stdenvNoCC,
+  version,
   ...
-}:
-stdenvNoCC.mkDerivation {
-  inherit pname version;
-
-  buildInputs = [ buf ];
-
-  buildPhase = ''
-    runHook preBuild
-
-    buf build ${src} --output $out/${output}
-
-    runHook postBuild
-  '';
-}
+}@attrs:
+runCommand "${pname}-${version}" attrs ''
+  ${buf}/bin/buf build ${src} --output $out/${output} ${lib.escapeShellArgs flags}
+''
