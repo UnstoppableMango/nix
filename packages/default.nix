@@ -1,5 +1,6 @@
 {
   imports = [
+    ./apis
     ./kube-vip
     ./dotnet.nix
     ./go.nix
