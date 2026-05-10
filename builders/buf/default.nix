@@ -15,7 +15,7 @@
 
         build = callPackage ./build.nix;
         buildBin = (callPackage ./build.nix).overrideAttrs (attrs: {
-          output = "$out/bin/${attrs.pname}.binpb";
+          output = "$out/bin/${attrs.pname}.${attrs.outputType}";
         });
       };
     in
