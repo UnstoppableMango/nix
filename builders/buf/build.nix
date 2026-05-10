@@ -1,16 +1,21 @@
 {
   buf ? pkgs.buf,
-  flags ? [ ],
-  lib,
-  output ? "$out/${pname}.${outputType}",
-  outputType ? "binpb",
+  flags ? "",
+  output ? "$out",
   pkgs,
-  pname,
+  name,
   runCommand,
   src,
-  version,
+  env ? { },
   ...
-}@attrs:
-runCommand "${pname}-${version}" attrs ''
-  ${buf}/bin/buf build ${src} --output $out/${output} ${lib.escapeShellArgs flags}
+}:
+runCommand name env ''
+  runHook preRun
+
+  export HOME="$(mktemp -d)"
+  ${buf}/bin/buf build ${src} \
+    --output ${output} \
+    ${flags}
+
+  runHook postRun
 ''
