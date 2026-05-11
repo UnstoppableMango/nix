@@ -26,10 +26,10 @@ Mini nixpkgs.
 
 Nix builder functions.
 
-- [buf](./builders/buf/default.nix)
-- [go](./builders/go/default.nix)
-- [kube-vip](./builders/kube-vip/default.nix)
-- [upjet](./builders/upjet/default.nix)
+- [buf](./builders/buf/default.nix) `bufTools`
+- [go](./builders/go/default.nix) `mangoTools`
+- [kube-vip](./builders/kube-vip/default.nix) `kubeVipTools`
+- [upjet](./builders/upjet/default.nix) `upjetTools`
 
 ## Usage
 
