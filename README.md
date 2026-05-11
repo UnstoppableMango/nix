@@ -49,3 +49,28 @@ Nix builder functions.
   };
 }
 ```
+
+### flake-parts
+
+```nix
+# flake-module.nix
+{
+  perSystem = { inputs', system, ... }:
+    let
+      # Access the builder package sets
+      inherit (inputs'.mangonix.legacyPackages) bufTools mangoTools;
+
+      # Access the builder functions
+      inherit (mangoTools) mkUpdateDeps;
+    in
+    {
+      # Consume the overlay
+      _module.args.pkgs = import inputs.nixpkgs {
+        inherit system;
+        overlays = with inputs'; [
+          mangonix.overlays.default
+        ];
+      };
+    }
+}
+```
