@@ -72,6 +72,7 @@
 
           overlayAttrs = {
             inherit (config.packages)
+              awxkit
               chart-releaser
               kubectl-get-all
               kubectl-get-resources

@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -25,6 +25,7 @@ jobs:
 
       - run: |
           nix build \
+            .#awxkit \
             .#chart-releaser \
             .#kube-vip \
             .#kubectl-get-all \
