@@ -13,16 +13,17 @@
       callPackage = lib.callPackageWith (packages // pkgs);
 
       packages = {
+        awxkit = callPackage ./awxkit { };
         omnissa-horizon-client = callPackage ./omnissa-horizon-client { };
       };
     in
     {
       packages = {
-        inherit (packages) omnissa-horizon-client;
+        inherit (packages) awxkit omnissa-horizon-client;
       };
 
       legacyPackages = {
-        inherit (packages) omnissa-horizon-client;
+        inherit (packages) awxkit omnissa-horizon-client;
       };
     };
 }
