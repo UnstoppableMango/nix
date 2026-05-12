@@ -25,7 +25,7 @@ jobs:
 
       - run: |
           nix build \
-            .#awxkit
+            .#awxkit \
             .#chart-releaser \
             .#kube-vip \
             .#kubectl-get-all \
