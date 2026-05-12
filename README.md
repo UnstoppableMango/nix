@@ -7,6 +7,7 @@ Feel free to consume, but this is primarily for personal use.
 
 Mini nixpkgs.
 
+- [awxkit](./packages/awxkit/default.nix)
 - [aspire-cli](./packages/aspire-cli/default.nix)
 - [chart-releaser](./packages/chart-releaser/default.nix)
 - [kube-vip](./packages/kube-vip/default.nix)
