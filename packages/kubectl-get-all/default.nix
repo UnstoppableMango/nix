@@ -1,6 +1,6 @@
 {
   buildGoApplication,
-  callPackage,
+  mangoTools,
   fetchFromGitHub,
   lib,
 }:
@@ -25,7 +25,7 @@ buildGoApplication rec {
     "-X github.com/stackitcloud/kubectl-get-all/internal/version.Version=${version}"
   ];
 
-  passthru.update-deps = callPackage ../update-deps.nix { inherit src; };
+  passthru.update-deps = mangoTools.mkUpdateDeps src;
 
   meta = with lib; {
     description = "Like `kubectl get all`, but get really all resources";
