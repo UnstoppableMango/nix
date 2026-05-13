@@ -4,6 +4,7 @@
     ./kube-vip
     ./dotnet.nix
     ./go.nix
+    ./images
     ./upjet.nix
   ];
 
