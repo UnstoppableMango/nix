@@ -6,5 +6,16 @@
   ],
   "nix": {
     "enabled": true
-  }
+  },
+  "customManagers": [
+    {
+      "description": "Update container image digests in nix2container pullImage calls",
+      "customType": "regex",
+      "fileMatch": ["^packages/images/.+\\.nix$"],
+      "matchStrings": [
+        "# renovate: depName=(?<depName>[^\\s]+) currentValue=(?<currentValue>[^\\s]+)\\n\\s+# NOTE:[^\\n]+\\n\\s+imageDigest = \"(?<currentDigest>sha256:[a-f0-9]+)\";"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ]
 }
