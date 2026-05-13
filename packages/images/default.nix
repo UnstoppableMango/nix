@@ -1,6 +1,11 @@
 {
   perSystem =
-    { inputs', pkgs, lib, ... }:
+    {
+      inputs',
+      pkgs,
+      lib,
+      ...
+    }:
     let
       inherit (inputs'.nix2container.packages) nix2container;
       callPackage = lib.callPackageWith (packages // pkgs);
