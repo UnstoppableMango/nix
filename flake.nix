@@ -76,6 +76,7 @@
               chart-releaser
               kubectl-get-all
               kubectl-get-resources
+              kubectl-slice
               mmake
               openshift-installer
               ;

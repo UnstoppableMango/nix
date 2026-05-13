@@ -17,6 +17,7 @@
         chart-releaser = callPackage ./chart-releaser { };
         kubectl-get-all = callPackage ./kubectl-get-all { };
         kubectl-get-resources = callPackage ./kubectl-get-resources { };
+        kubectl-slice = callPackage ./kubectl-slice { };
         mmake = callPackage ./mmake { };
         openshift-installer = callPackage ./openshift-installer { };
         smarter-device-manager = callPackage ./smarter-device-manager { };
@@ -28,6 +29,7 @@
           chart-releaser
           kubectl-get-all
           kubectl-get-resources
+          kubectl-slice
           mmake
           openshift-installer
           smarter-device-manager

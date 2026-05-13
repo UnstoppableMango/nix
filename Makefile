@@ -1,5 +1,5 @@
 CS_PKGS  := aspire-cli
-GO_PKGS  := chart-releaser kube-vip kubectl-get-all kubectl-get-resources mmake openshift-installer smarter-device-manager upjet-provider-cloudflare
+GO_PKGS  := chart-releaser kube-vip kubectl-get-all kubectl-get-resources kubectl-slice mmake openshift-installer smarter-device-manager upjet-provider-cloudflare
 ALL_PKGS := ${CS_PKGS} ${GO_PKGS} omnissa-horizon-client
 
 check:
@@ -17,7 +17,7 @@ deps: ${CS_PKGS:%=packages/%/deps.json} ${GO_PKGS:%=packages/%/gomod2nix.toml}
 packages/%/deps.json: packages/%/default.nix
 	"$$(nix build .#$*.fetch-deps --print-out-paths)" ${CURDIR}/$@
 
-packages/%/gomod2nix.toml: packages/%/default.nix packages/update-deps.nix
+packages/%/gomod2nix.toml: packages/%/default.nix
 	"$$(nix build .#$*.update-deps --print-out-paths --no-substitute)/bin/update-deps" ${CURDIR}/$@
 
 packages/%/gomod.patch: packages/%/default.nix
