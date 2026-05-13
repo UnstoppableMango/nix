@@ -16,6 +16,10 @@ Mini nixpkgs.
 - [mmake](./packages/mmake/default.nix)
 - [openshift-installer](./packages/openshift-installer/default.nix)
 
+### OCI Images
+
+- [github-runner](./packages/images/github-runner.nix)
+
 ### Experimental
 
 - [apis](./packages/apis/default.nix)
