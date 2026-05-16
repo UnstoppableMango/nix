@@ -27,4 +27,4 @@ jobs:
           name: unstoppablemango
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix run .#images.github-runner.copyToDocker
+      - run: nix run .#images.github-runner.copyToDockerDaemon
