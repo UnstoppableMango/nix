@@ -49,7 +49,7 @@ jobs:
             --password-stdin \
             --authfile ${{ github.workspace }}/auth.json
 
-          for tag in ${{ steps.meta.outputs.tags }}; do
+          for tag in '${{ steps.meta.outputs.tags }}'; do
             nix run .#images.${{ matrix.image }}.copyTo -- "docker://$tag" \
               --authfile ${{ github.workspace }}/auth.json
           done
