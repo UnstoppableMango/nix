@@ -12,6 +12,10 @@ on:
       - .github/workflows/images.yml
       - packages/images/**
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
