@@ -15,6 +15,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image:
+          - github-runner
+          - hercules-ci-agent
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
@@ -27,4 +32,21 @@ jobs:
           name: unstoppablemango
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix run .#images.github-runner.copyToDockerDaemon
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v6.0.0
+        with:
+          images: |
+            ghcr.io/unstoppablemango/${{ github.event.repository.name }}/${{ matrix.image }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha
+
+      - run: |
+          baseTag="$(nix eval --raw .#images.${{ matrix.image }}.imageTag)"
+          image="$(nix eval --raw .#images.${{ matrix.image }}.imageRefUnsafe)"
+
+          for tag in ${{ steps.meta.outputs.tags }}; do
+            nix run .#images.${{ matrix.image }}.copyTo -- "docker://$tag"
+          done
