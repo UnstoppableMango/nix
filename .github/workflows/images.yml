@@ -27,6 +27,6 @@ jobs:
           name: unstoppablemango
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - uses: redhat-actions/podman-install@92eb12467c2fc271e7781d006c413e17770230ed # main
+      # - uses: redhat-actions/podman-install@92eb12467c2fc271e7781d006c413e17770230ed # main
 
       - run: nix run .#images.github-runner.copyToPodman
