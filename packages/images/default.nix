@@ -12,6 +12,7 @@
 
       packages = {
         github-runner = callPackage ./github-runner { inherit nix2container; };
+        hercules-ci-agent = callPackage ./hercules-ci-agent { inherit nix2container; };
       };
     in
     {
