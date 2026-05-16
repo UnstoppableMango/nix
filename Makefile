@@ -1,6 +1,7 @@
 CS_PKGS  := aspire-cli
 GO_PKGS  := chart-releaser kube-vip kubectl-get-all kubectl-get-resources kubectl-slice mmake openshift-installer smarter-device-manager upjet-provider-cloudflare
-ALL_PKGS := ${CS_PKGS} ${GO_PKGS} omnissa-horizon-client
+IMAGES   := github-runner
+ALL_PKGS := ${CS_PKGS} ${GO_PKGS} ${IMAGES} omnissa-horizon-client
 
 check:
 	nix flake check
@@ -12,7 +13,7 @@ ${GO_PKGS}: %: packages/%/gomod2nix.toml
 update:
 	nix flake update
 
-deps: ${CS_PKGS:%=packages/%/deps.json} ${GO_PKGS:%=packages/%/gomod2nix.toml}
+deps: ${CS_PKGS:%=packages/%/deps.json} ${GO_PKGS:%=packages/%/gomod2nix.toml} ${IMAGES:%=packages/images/%/manifest.json}
 
 packages/%/deps.json: packages/%/default.nix
 	"$$(nix build .#$*.fetch-deps --print-out-paths)" ${CURDIR}/$@
