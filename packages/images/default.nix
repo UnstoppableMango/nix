@@ -11,7 +11,7 @@
       callPackage = lib.callPackageWith (packages // pkgs);
 
       packages = {
-        github-runner = callPackage ./github-runner.nix { inherit nix2container; };
+        github-runner = callPackage ./github-runner { inherit nix2container; };
       };
     in
     {

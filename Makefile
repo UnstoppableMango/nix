@@ -23,5 +23,8 @@ packages/%/gomod2nix.toml: packages/%/default.nix
 packages/%/gomod.patch: packages/%/default.nix
 	"$$(nix build .#$*.go-mod-patch --print-out-paths --no-substitute)/bin/go-mod-init" >${CURDIR}/$@
 
+packages/images/%/manifest.json: packages/images/%/default.nix
+	nix run .#images.$*.fromImage.getManifest > $@
+
 .vscode/settings.json: hack/vscode.json
 	mkdir -p ${@D} && cp $< $@
