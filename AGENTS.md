@@ -9,37 +9,58 @@ Personal Nix flake repository that aggregates various Nix packages and tools. Us
 ## Commands
 
 ```bash
-nix develop          # Enter dev shell (provides: gomod2nix, nil, nixfmt, nurl)
+nix develop          # Enter dev shell (provides: gomod2nix, nil, nixfmt, nurl, watchexec)
 nix fmt              # Format all Nix files with nixfmt
 nix flake check      # Validate flake and build all outputs
 nix flake check --all-systems  # Check across all supported systems (also: make check)
 nix build .#<name>   # Build a specific package
 make build           # Build all Go packages
 make update          # Update flake.lock (nix flake update)
-make deps            # Generate aspire-cli deps.json
+make deps            # Regenerate all dependency files (gomod2nix.toml, deps.json, manifest.json)
 ```
 
 To regenerate `gomod2nix.toml` for a Go package (e.g., after version bump):
 ```bash
 make packages/<name>/gomod2nix.toml
 ```
-This fetches the upstream `go.mod` and runs `gomod2nix generate`.
+This uses a nix-built `update-deps` script to fetch the upstream `go.mod` and run `gomod2nix generate`.
 
 ## Architecture
 
 ### Flake structure
 
-`flake.nix` uses flake-parts modules. Each package in `packages/` is a standalone flake-parts module imported into `flake.nix`. New packages must be added to both `packages/` and the `imports` list in `flake.nix`.
+`flake.nix` uses flake-parts and imports two top-level modules:
+- `./builders` — reusable builder functions (bufTools, mangoTools, kubeVipTools, upjetTools)
+- `./packages` — all package definitions
 
-Packages are also exposed via `overlayAttrs` so other flakes can consume them as an overlay.
+`packages/default.nix` aggregates submodules (`go.nix`, `dotnet.nix`, `upjet.nix`, `./apis`, `./kube-vip`, `./images`). New packages are added to the appropriate submodule in `packages/`, not directly to `flake.nix`.
 
-### Go packages
+A subset of packages is exposed via `overlayAttrs` so other flakes can consume them as an overlay:
+awxkit, chart-releaser, kubectl-get-all, kubectl-get-resources, kubectl-slice, mmake, openshift-installer.
 
-All Go packages (chart-releaser, kubectl-get-all, kubectl-get-resources, mmake, openshift-installer) use `buildGoApplication` from gomod2nix. Each requires a `gomod2nix.toml` generated from the upstream `go.mod`. The Makefile fetches upstream `go.mod` files via `curl` and then runs `gomod2nix generate`.
+### Packages
 
-### Non-Go packages
+**Go packages** (`packages/go.nix` and `packages/kube-vip/`): chart-releaser, kube-vip, kubectl-get-all, kubectl-get-resources, kubectl-slice, mmake, openshift-installer, smarter-device-manager, upjet-provider-cloudflare. All use `buildGoApplication` from gomod2nix and require a `gomod2nix.toml`.
 
-- **aspire-cli**: Uses `buildDotnetModule`; deps generated via `bin/aspire-cli-deps.sh` (built from the package's `fetch-deps` output)
+**Dotnet packages** (`packages/dotnet.nix`): aspire-cli. Uses `buildDotnetModule`; deps regenerated via `make packages/aspire-cli/deps.json` (runs the package's nix-built `fetch-deps` script).
+
+**Python packages** (`packages/default.nix`): awxkit.
+
+**Other packages** (`packages/default.nix`): omnissa-horizon-client (unfree VMware Horizon client).
+
+**Upjet providers** (`packages/upjet.nix`): upjet-provider-cloudflare. Uses a custom upjet builder.
+
+**Container images** (`packages/images/`): github-runner, hercules-ci-agent. Use nix2container; manifests regenerated via `make packages/images/<name>/manifest.json`.
+
+**Experimental** (`packages/apis/`): protobuf build helper (not yet exposed in overlayAttrs or CI).
+
+### Builders
+
+`builders/` is a flake-parts module that exposes reusable build toolkits:
+- **bufTools** (`builders/buf/`) — Protocol Buffer build/generate/convert helpers
+- **mangoTools** (`builders/go/`) — Go module init and dep-update helpers
+- **kubeVipTools** (`builders/kube-vip/`) — kube-vip manifest builders
+- **upjetTools** (`builders/upjet/`) — Upjet provider scaffolding
 
 ### Templates
 
@@ -48,9 +69,9 @@ All Go packages (chart-releaser, kubectl-get-all, kubectl-get-resources, mmake, 
 ## Adding a new package
 
 1. Create `packages/<name>/default.nix` following existing package patterns
-2. Add the module to the `imports` list in `flake.nix`
-3. Add it to `overlayAttrs` in `flake.nix` for external consumption
-4. For Go packages: add `go.mod` fetch and `gomod2nix.toml` generation targets to the Makefile
+2. Add the package to the appropriate submodule in `packages/` (e.g., `go.nix` for Go packages, or `packages/default.nix` for one-offs)
+3. For Go packages: add `gomod2nix.toml` generation targets to the Makefile (add the package name to `GO_PKGS`)
+4. Optionally add to `overlayAttrs` in `flake.nix` for external consumption via overlay
 
 ## Key conventions
 
