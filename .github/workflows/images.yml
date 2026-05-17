@@ -1,0 +1,59 @@
+name: Container Images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/images.yml
+      - packages/images/**
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/images.yml
+      - packages/images/**
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        image:
+          - github-runner
+          - hercules-ci-agent
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: cachix/install-nix-action@8aa03977d8d733052d78f4e008a241fd1dbf36b3 # v31.10.6
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: cachix/cachix-action@5f2d7c5294214f71b873db4b969586b980625e71 # v17
+        with:
+          name: unstoppablemango
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v6.0.0
+        with:
+          images: |
+            ghcr.io/unstoppablemango/${{ github.event.repository.name }}/${{ matrix.image }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha
+
+      - run: |
+          echo "${{ github.token }}" | skopeo login ghcr.io \
+            --username ${{ github.actor }} \
+            --password-stdin \
+            --authfile ${{ github.workspace }}/auth.json
+
+          while read -r tag; do
+            nix run .#images.${{ matrix.image }}.copyTo -- "docker://$tag" \
+              --authfile ${{ github.workspace }}/auth.json
+          done <<<'${{ steps.meta.outputs.tags }}'
