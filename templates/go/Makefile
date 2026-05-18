@@ -13,7 +13,7 @@ test:
 update:
 	nix flake update
 
-check:
+check lint:
 	nix flake check
 
 format fmt:
@@ -24,5 +24,5 @@ tidy: go.sum
 go.sum: go.mod ${GO_SRC}
 	$(GO) mod tidy
 
-gomod2nix.toml: go.sum ${GO_SRC}
-	$(GOMOD2NIX) generate
+nix/gomod2nix.toml: go.sum ${GO_SRC}
+	$(GOMOD2NIX) generate --dir ${CURDIR} --outdir ${@D}

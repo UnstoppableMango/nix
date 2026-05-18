@@ -4,7 +4,7 @@ build:
 update:
 	nix flake update
 
-check:
+check lint:
 	nix flake check
 
 format fmt:
