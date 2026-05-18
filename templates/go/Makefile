@@ -21,7 +21,7 @@ format fmt:
 
 tidy: go.sum
 
-go.sum: go.mod ${GO_SRC}
+go.sum: go.mod ${GO_SRC} nix/gomod2nix.toml
 	$(GO) mod tidy
 
 nix/gomod2nix.toml: go.sum ${GO_SRC}
