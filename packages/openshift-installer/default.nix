@@ -1,9 +1,8 @@
 {
   buildGoApplication,
-  callPackage,
   fetchFromGitHub,
   lib,
-  ...
+  mangoTools,
 }:
 let
   version = "4.23";
@@ -11,7 +10,7 @@ let
     owner = "openshift";
     repo = "installer";
     rev = "release-${version}";
-    hash = "sha256-VYjmhmbUt6IXUA+pwzfESTp/7hqWwukp7sE6wF5Ouus=";
+    hash = "sha256-KBDkEQtSizxFBdLgQ/O19PLUhfOetmqwwrOERqhyTJM=";
   };
 in
 buildGoApplication {
@@ -32,7 +31,7 @@ buildGoApplication {
   # TODO
   doCheck = false;
 
-  passthru.update-deps = callPackage ../update-deps.nix { inherit src; };
+  passthru.update-deps = mangoTools.mkUpdateDeps src;
 
   meta = with lib; {
     description = "Install an OpenShift Cluster";

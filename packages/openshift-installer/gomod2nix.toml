@@ -849,8 +849,8 @@ schema = 3
     hash = 'sha256-yfXm5UkBwnAz69zxyLVbEn1ZMP9yfuMISrghMN6tWoA='
 
   [mod.'github.com/openshift/api']
-    version = 'v0.0.0-20260408092441-8b086e6b9eb9'
-    hash = 'sha256-DLUTDCd2TWMzzEeu+YeqCAyVJ3Nu11wcnBCGAbeKbus='
+    version = 'v0.0.0-20260429122012-1180c0f5c3e9'
+    hash = 'sha256-fa3GrTKgh0TuSfF+6u7cFSOCJnSYnjGMQ0Iq+efoeKU='
 
   [mod.'github.com/openshift/assisted-image-service']
     version = 'v0.0.0-20250917153356-4ca9ff81f712'
@@ -872,8 +872,8 @@ schema = 3
     replaced = 'github.com/openshift/assisted-service/models'
 
   [mod.'github.com/openshift/client-go']
-    version = 'v0.0.0-20260317180604-743f664b82d1'
-    hash = 'sha256-t4EchM75eU12fY4ioZ82/rqWAzAnGO01JEAxNQpuUhI='
+    version = 'v0.0.0-20260429123927-c81f86abfa6a'
+    hash = 'sha256-JrRyv9nQcFHzHm/3P0Qp9F7RsQuvaNMn3n0jJWtdxoQ='
 
   [mod.'github.com/openshift/cloud-credential-operator']
     version = 'v0.0.0-20250925191450-a3e50aeacc55'
@@ -900,8 +900,8 @@ schema = 3
     hash = 'sha256-JcYWT3ElsTafNgvZSbyrteFIEoT0OP3FB/KGrcqIYf8='
 
   [mod.'github.com/openshift/library-go']
-    version = 'v0.0.0-20251107090138-0de9712313a5'
-    hash = 'sha256-J+ze4q5qRH1b53LXXUQsH4Dr+1vNtOKsIYrA3IUuFhI='
+    version = 'v0.0.0-20260505113324-de46cb8e2ddc'
+    hash = 'sha256-HwWzlkvLnqAaRPigR4I9Rw+cJA1SqMZVFNM6eM6R0SI='
 
   [mod.'github.com/openshift/machine-api-operator']
     version = 'v0.2.1-0.20251110092458-e0af0f3f44b8'
@@ -1242,11 +1242,6 @@ schema = 3
   [mod.'k8s.io/client-go']
     version = 'v0.35.1'
     hash = 'sha256-QEQ7TLUviAXDbvp2s6tT3HZtXy7pLjj5qSDu89iC9ek='
-
-  [mod.'k8s.io/cloud-provider-vsphere']
-    version = 'v1.19.1-0.20240626105621-6464d0bb4928'
-    hash = 'sha256-DDs3sCx/6KmilDeMgt+cpmrK8uZHEwf/tPNwjPkMTfk='
-    replaced = 'github.com/openshift/cloud-provider-vsphere'
 
   [mod.'k8s.io/cluster-bootstrap']
     version = 'v0.33.3'
