@@ -1,6 +1,6 @@
-GO        ?= nix develop -c go
-GOMOD2NIX ?= nix develop -c gomod2nix
-GINKGO    ?= nix develop -c ginkgo
+GO        ?= go
+GOMOD2NIX ?= gomod2nix
+GINKGO    ?= ginkgo
 
 GO_SRC ?= $(shell find . -name '*.go')
 
