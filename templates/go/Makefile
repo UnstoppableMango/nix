@@ -1,6 +1,6 @@
-GO        ?= nix develop -c go
-GOMOD2NIX ?= nix develop -c gomod2nix
-GINKGO    ?= nix develop -c ginkgo
+GO        ?= go
+GOMOD2NIX ?= gomod2nix
+GINKGO    ?= ginkgo
 
 GO_SRC ?= $(shell find . -name '*.go')
 
@@ -13,7 +13,7 @@ test:
 update:
 	nix flake update
 
-check:
+check lint:
 	nix flake check
 
 format fmt:
@@ -21,8 +21,8 @@ format fmt:
 
 tidy: go.sum
 
-go.sum: go.mod ${GO_SRC}
+go.sum: go.mod ${GO_SRC} nix/gomod2nix.toml
 	$(GO) mod tidy
 
-gomod2nix.toml: go.sum ${GO_SRC}
-	$(GOMOD2NIX) generate
+nix/gomod2nix.toml: go.sum ${GO_SRC}
+	$(GOMOD2NIX) generate --dir ${CURDIR} --outdir ${@D}
