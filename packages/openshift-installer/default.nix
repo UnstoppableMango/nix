@@ -11,7 +11,7 @@ let
     owner = "openshift";
     repo = "installer";
     rev = "release-${version}";
-    hash = "sha256-VYjmhmbUt6IXUA+pwzfESTp/7hqWwukp7sE6wF5Ouus=";
+    hash = "sha256-KBDkEQtSizxFBdLgQ/O19PLUhfOetmqwwrOERqhyTJM=";
   };
 in
 buildGoApplication {
