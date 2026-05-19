@@ -1,10 +1,10 @@
 {
   buildGoApplication,
-  callPackage,
   fetchFromGitHub,
   gnumake,
   lib,
   makeWrapper,
+  mangoTools,
 }:
 let
   version = "1.4.0";
@@ -31,7 +31,7 @@ buildGoApplication {
     wrapProgram $out/bin/mmake --prefix PATH : ${lib.makeBinPath [ gnumake ]}
   '';
 
-  passthru.update-deps = callPackage ../update-deps.nix { inherit src; };
+  passthru.update-deps = mangoTools.mkUpdateDeps src;
 
   meta = with lib; {
     description = "Modern Make";

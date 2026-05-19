@@ -1,9 +1,8 @@
 {
   buildGoApplication,
-  callPackage,
   fetchFromGitHub,
   lib,
-  ...
+  mangoTools,
 }:
 let
   version = "4.23";
@@ -32,7 +31,7 @@ buildGoApplication {
   # TODO
   doCheck = false;
 
-  passthru.update-deps = callPackage ../update-deps.nix { inherit src; };
+  passthru.update-deps = mangoTools.mkUpdateDeps src;
 
   meta = with lib; {
     description = "Install an OpenShift Cluster";
