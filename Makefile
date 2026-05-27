@@ -1,5 +1,5 @@
 CS_PKGS  := aspire-cli
-GO_PKGS  := chart-releaser kube-vip kubectl-get-all kubectl-get-resources kubectl-slice mmake openshift-installer smarter-device-manager upjet-provider-cloudflare
+GO_PKGS  := chart-releaser kube-vip kubectl-get-all kubectl-get-resources kubectl-slice mmake openshift-installer upjet-provider-cloudflare
 IMAGES   := github-runner
 ALL_PKGS := ${CS_PKGS} ${GO_PKGS} ${IMAGES} omnissa-horizon-client
 
@@ -8,7 +8,7 @@ check:
 
 build: ${GO_PKGS}
 ${GO_PKGS}: %: packages/%/gomod2nix.toml
-	nix build .#$* --no-substitute
+	nix build .#$*
 
 update:
 	nix flake update
@@ -19,10 +19,10 @@ packages/%/deps.json: packages/%/default.nix
 	"$$(nix build .#$*.fetch-deps --print-out-paths)" ${CURDIR}/$@
 
 packages/%/gomod2nix.toml: packages/%/default.nix
-	"$$(nix build .#$*.update-deps --print-out-paths --no-substitute)/bin/update-deps" ${CURDIR}/$@
+	"$$(nix build .#$*.update-deps --print-out-paths)/bin/update-deps" ${CURDIR}/$@
 
 packages/%/gomod.patch: packages/%/default.nix
-	"$$(nix build .#$*.go-mod-patch --print-out-paths --no-substitute)/bin/go-mod-init" >${CURDIR}/$@
+	"$$(nix build .#$*.go-mod-patch --print-out-paths)/bin/go-mod-init" >${CURDIR}/$@
 
 packages/images/%/manifest.json: packages/images/%/default.nix
 	nix run .#images.$*.fromImage.getManifest > $@
