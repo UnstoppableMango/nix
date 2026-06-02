@@ -9,6 +9,7 @@
   lib,
   makeWrapper,
   mangoTools,
+  nix-update-script,
   yamale,
   yamllint,
 }:
@@ -65,6 +66,7 @@ buildGoApplication {
   '';
 
   passthru.update-deps = mangoTools.mkUpdateDeps src;
+  passthru.updateScript = nix-update-script { };
 
   meta = with lib; {
     description = "Hosting Helm Charts via GitHub Pages and Releases";

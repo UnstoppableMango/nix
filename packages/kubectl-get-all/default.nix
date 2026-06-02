@@ -1,8 +1,9 @@
 {
   buildGoApplication,
-  mangoTools,
   fetchFromGitHub,
   lib,
+  mangoTools,
+  nix-update-script,
 }:
 let
   version = "1.4.2";
@@ -26,6 +27,7 @@ buildGoApplication rec {
   ];
 
   passthru.update-deps = mangoTools.mkUpdateDeps src;
+  passthru.updateScript = nix-update-script { };
 
   meta = with lib; {
     description = "Like `kubectl get all`, but get really all resources";

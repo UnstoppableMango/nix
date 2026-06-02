@@ -1,8 +1,9 @@
 {
   buildGoApplication,
   fetchFromGitHub,
-  mangoTools,
   lib,
+  mangoTools,
+  nix-update-script,
 }:
 let
   version = "1.1.2";
@@ -29,6 +30,7 @@ buildGoApplication {
   ];
 
   passthru.update-deps = mangoTools.mkUpdateDeps src;
+  passthru.updateScript = nix-update-script { };
 
   meta = with lib; {
     description = "Kube-VIP: Virtual IP for Kubernetes clusters";

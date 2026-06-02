@@ -21,6 +21,9 @@ packages/%/deps.json: packages/%/default.nix
 packages/%/gomod2nix.toml: packages/%/default.nix
 	"$$(nix build .#$*.update-deps --print-out-paths)/bin/update-deps" ${CURDIR}/$@
 
+packages/%/update: packages/%/default.nix
+	"$$(nix build .#$*.updateScript --no-link --print-out-paths)"
+
 packages/%/gomod.patch: packages/%/default.nix
 	"$$(nix build .#$*.go-mod-patch --print-out-paths)/bin/go-mod-init" >${CURDIR}/$@
 

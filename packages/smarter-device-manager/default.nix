@@ -5,6 +5,7 @@
   lib,
   makeWrapper,
   mangoTools,
+  nix-update-script,
 }:
 let
   pname = "smarter-device-manager";
@@ -31,6 +32,7 @@ buildGoApplication {
 
   passthru.go-mod-patch = mangoTools.modInit src "arm.com/smarter-device-management";
   passthru.update-deps = callPackage ./update-deps.nix { inherit src; };
+  passthru.updateScript = nix-update-script { };
 
   meta = with lib; {
     description = "Kubernetes device plugin for exposing host devices to containers";

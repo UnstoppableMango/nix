@@ -3,6 +3,7 @@
   fetchFromGitHub,
   lib,
   mangoTools,
+  nix-update-script,
 }:
 let
   version = "0.22.0";
@@ -27,6 +28,7 @@ buildGoApplication {
   doCheck = false;
 
   passthru.update-deps = mangoTools.mkUpdateDeps src;
+  passthru.updateScript = nix-update-script { };
 
   meta = with lib; {
     description = "Used to configure pfSense firewall/router devices with Terraform";

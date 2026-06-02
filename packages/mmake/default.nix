@@ -5,6 +5,7 @@
   lib,
   makeWrapper,
   mangoTools,
+  nix-update-script,
 }:
 let
   version = "1.4.0";
@@ -32,6 +33,7 @@ buildGoApplication {
   '';
 
   passthru.update-deps = mangoTools.mkUpdateDeps src;
+  passthru.updateScript = nix-update-script { };
 
   meta = with lib; {
     description = "Modern Make";
