@@ -2,6 +2,7 @@
   lib,
   buildGoApplication,
   fetchFromGitHub,
+  mangoTools,
 }:
 
 let
@@ -21,10 +22,7 @@ let
       ...
     }@attrs:
     assert lib.stringLength provider-source-address > 0;
-    buildGoApplication {
-      pname = repo;
-      inherit version modules;
-
+    let
       src = fetchFromGitHub {
         name = "source-${rev}";
         inherit
@@ -34,8 +32,15 @@ let
           hash
           ;
       };
+    in
+    buildGoApplication {
+      pname = repo;
+      inherit version modules src;
 
       doCheck = false;
+      # https://github.com/hashicorp/terraform-provider-scaffolding/blob/a8ac8375a7082befe55b71c8cbb048493dd220c2/.goreleaser.yml
+      # goreleaser (used for builds distributed via terraform registry) requires that CGO is disabled
+      # https://github.com/NixOS/nixpkgs/blob/8e0bf15ad409d025e84f8e55c5c0ee284c41141c/pkgs/applications/networking/cluster/terraform-providers/default.nix#L51
       CGO_ENABLED = 0;
 
       ldflags = [
@@ -58,7 +63,8 @@ let
       };
 
       passthru = attrs // {
-        inherit provider-source-address;
+        inherit provider-source-address src;
+        update-deps = mangoTools.mkUpdateDeps src;
       };
     }
   );
