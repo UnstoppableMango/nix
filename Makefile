@@ -13,6 +13,9 @@ ${GO_PKGS}: %: packages/%/gomod2nix.toml
 update:
 	nix flake update
 
+update-provider/%:
+	packages/terraform-providers/update-provider $*
+
 deps: ${CS_PKGS:%=packages/%/deps.json} ${GO_PKGS:%=packages/%/gomod2nix.toml} ${IMAGES:%=packages/images/%/manifest.json}
 
 packages/%/deps.json: packages/%/default.nix
