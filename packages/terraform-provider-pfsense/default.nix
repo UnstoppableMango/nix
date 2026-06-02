@@ -9,7 +9,7 @@ let
   src = fetchFromGitHub {
     owner = "marshallford";
     repo = "terraform-provider-pfsense";
-    tag = "v${version}";
+    rev = "v${version}";
     hash = "sha256-hGPq3m41DmfvpZgHSYVVH/vqhyU5WrgK3P4d6NBlU6k=";
   };
 in
