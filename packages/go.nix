@@ -21,6 +21,7 @@
         mmake = callPackage ./mmake { };
         openshift-installer = callPackage ./openshift-installer { };
         smarter-device-manager = callPackage ./smarter-device-manager { };
+        terraform-provider-pfsense = callPackage ./terraform-provider-pfsense { };
       };
     in
     {
@@ -33,6 +34,7 @@
           mmake
           openshift-installer
           smarter-device-manager
+          terraform-provider-pfsense
           ;
       };
 

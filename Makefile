@@ -1,5 +1,5 @@
 CS_PKGS  := aspire-cli
-GO_PKGS  := chart-releaser kube-vip kubectl-get-all kubectl-get-resources kubectl-slice mmake openshift-installer upjet-provider-cloudflare
+GO_PKGS  := chart-releaser kube-vip kubectl-get-all kubectl-get-resources kubectl-slice mmake openshift-installer terraform-provider-pfsense upjet-provider-cloudflare
 IMAGES   := github-runner
 ALL_PKGS := ${CS_PKGS} ${GO_PKGS} ${IMAGES} omnissa-horizon-client
 
