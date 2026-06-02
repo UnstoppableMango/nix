@@ -13,7 +13,7 @@
       "customType": "regex",
       "fileMatch": ["^packages/images/.+\\.nix$"],
       "matchStrings": [
-        "# renovate: depName=(?<depName>[^\\s]+) currentValue=(?<currentValue>[^\\s]+)\\n\\s+# NOTE:[^\\n]+\\n\\s+imageDigest = \"(?<currentDigest>sha256:[a-f0-9]+)\";"
+        "# renovate: depName=(?<depName>[^\\s]+) currentValue=(?<currentValue>[^\\s]+)(?:\\n\\s+#[^\\n]*)*\\n\\s+imageDigest = \"(?<currentDigest>sha256:[a-f0-9]+)\";"
       ],
       "datasourceTemplate": "docker"
     }
