@@ -3,6 +3,7 @@
   fetchFromGitHub,
   lib,
   mangoTools,
+  nix-update-script,
 }:
 let
   version = "1.4.2";
@@ -27,6 +28,7 @@ buildGoApplication rec {
   ];
 
   passthru.update-deps = mangoTools.mkUpdateDeps src;
+  passthru.updateScript = nix-update-script { };
 
   meta = with lib; {
     description = "Split multiple Kubernetes files into smaller files with ease. Split multi-YAML files into individual files.";

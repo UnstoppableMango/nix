@@ -1,9 +1,10 @@
 {
-  fetchFromGitHub,
-  lib,
-  pkgs,
   buildDotnetModule,
   dotnetCorePackages,
+  fetchFromGitHub,
+  lib,
+  nix-update-script,
+  pkgs,
 }:
 let
   dotnet = dotnetCorePackages.sdk_10_0_1xx;
@@ -28,6 +29,8 @@ buildDotnetModule rec {
   projectFile = "./src/Aspire.Cli/Aspire.Cli.csproj";
   nugetDeps = ./deps.json;
   selfContainedBuild = true;
+
+  passthru.updateScript = nix-update-script { };
 
   meta = with lib; {
     description = "A CLI tool for managing Aspire projects";

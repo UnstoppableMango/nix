@@ -3,6 +3,7 @@
   fetchFromGitHub,
   lib,
   mangoTools,
+  nix-update-script,
 }:
 let
   version = "0.1.1";
@@ -20,6 +21,7 @@ buildGoApplication {
   modules = ./gomod2nix.toml;
 
   passthru.update-deps = mangoTools.mkUpdateDeps src;
+  passthru.updateScript = nix-update-script { };
 
   meta = with lib; {
     description = "Get Kubernetes resources (cluster or namespace scope) in CSV or YAML with support for multiple filtering flags.";

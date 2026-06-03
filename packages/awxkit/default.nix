@@ -1,6 +1,7 @@
 {
   lib,
   fetchFromGitHub,
+  nix-update-script,
   python3Packages,
 }:
 let
@@ -56,6 +57,8 @@ python3Packages.buildPythonApplication {
     setuptools
     websocket-client
   ];
+
+  passthru.updateScript = nix-update-script { };
 
   meta = with lib; {
     description = "Official command line interface for Ansible AWX";

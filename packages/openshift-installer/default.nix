@@ -5,7 +5,7 @@
   mangoTools,
 }:
 let
-  version = "4.23";
+  version = "1.4.22-ec5";
   src = fetchFromGitHub {
     owner = "openshift";
     repo = "installer";
