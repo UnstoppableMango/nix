@@ -67,6 +67,11 @@
             overlays = with inputs; [
               gomod2nix.overlays.default
               nil.overlays.default
+              (_: prev: {
+                lib = prev.lib.extend (_: lprev: {
+                  maintainers = lprev.maintainers // (import ./lib/maintainers.nix);
+                });
+              })
             ];
           };
 
@@ -87,6 +92,7 @@
               bashInteractive
               gomod2nix
               nil
+              nix-update
               nixfmt
               nurl
               watchexec
