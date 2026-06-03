@@ -68,9 +68,11 @@
               gomod2nix.overlays.default
               nil.overlays.default
               (_: prev: {
-                lib = prev.lib.extend (_: lprev: {
-                  maintainers = lprev.maintainers // (import ./lib/maintainers.nix);
-                });
+                lib = prev.lib.extend (
+                  _: lprev: {
+                    maintainers = lprev.maintainers // (import ./lib/maintainers.nix);
+                  }
+                );
               })
             ];
           };
