@@ -1,5 +1,5 @@
 #!/usr/bin/env nix-shell
-#! nix-shell -i bash -p coreutils curl git jq nurl
+#! nix-shell -i bash -p coreutils curl git gnugrep gnused jq nurl
 # shellcheck shell=bash
 set -euo pipefail
 shopt -s inherit_errexit
@@ -72,7 +72,11 @@ is_stable_version() { [[ $1 =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; }
 # marshallford_pfsense -> https://registry.terraform.io/v1/providers/marshallford/pfsense
 registry_url="https://registry.terraform.io/v1/providers/${provider//_//}"
 
-old_rev=$(grep -A 10 "${provider} = mkProvider" "$DEFAULT_NIX" | grep 'rev = ' | sed 's/.*rev = "\(.*\)";.*/\1/')
+old_rev=$(grep -A 10 "${provider} = mkProvider" "$DEFAULT_NIX" | grep 'rev = ' | sed 's/.*rev = "\(.*\)";.*/\1/' || true)
+if [[ -z ${old_rev:-} ]]; then
+  echo "ERROR: terraform-providers.${provider}: not found in $DEFAULT_NIX"
+  exit 1
+fi
 
 echo_provider "current rev: ${old_rev}"
 echo_provider "querying registry"
@@ -103,8 +107,14 @@ owner_repo=$(jq -r '.source' <<< "$version_response" | sed 's|https://github.com
 echo_provider "computing hash for ${owner_repo}@${rev}"
 new_hash=$(nurl "https://github.com/${owner_repo}" "$rev")
 
-old_hash=$(grep -A 10 "${provider} = mkProvider" "$DEFAULT_NIX" | grep 'hash = ' | sed 's/.*hash = "\(.*\)";.*/\1/')
+old_hash=$(grep -A 10 "${provider} = mkProvider" "$DEFAULT_NIX" | grep 'hash = ' | sed 's/.*hash = "\(.*\)";.*/\1/' || true)
+if [[ -z ${old_hash:-} ]]; then
+  echo_provider "ERROR: could not extract hash from $DEFAULT_NIX"
+  exit 1
+fi
 
+# TODO: scope substitutions to the target provider's mkProvider block so that
+# two providers at the same rev tag don't clobber each other.
 sed -i "s|${old_rev}|${rev}|g" "$DEFAULT_NIX"
 sed -i "s|${old_hash}|${new_hash}|g" "$DEFAULT_NIX"
 echo_provider "patched $DEFAULT_NIX"
