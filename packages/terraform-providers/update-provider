@@ -1,0 +1,139 @@
+#!/usr/bin/env nix-shell
+#! nix-shell -i bash -p coreutils curl git gnugrep gnused jq nurl
+# shellcheck shell=bash
+set -euo pipefail
+shopt -s inherit_errexit
+set -x
+
+show_usage() {
+  cat <<DOC
+Usage: ./update-provider [--force] [--no-build] <owner>_<provider>
+
+Add or update a single provider in packages/terraform-providers/default.nix.
+
+For example to update 'terraform-providers.marshallford_pfsense' run:
+
+    ./update-provider marshallford_pfsense
+
+Options:
+
+  * --force: Force the update even if the version matches.
+  * --no-build: Don't build provider after update.
+DOC
+}
+
+build=1
+force=
+provider=
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+  -h | --help)
+    show_usage
+    exit
+    ;;
+  --force)
+    force=1
+    shift
+    ;;
+  --no-build)
+    build=0
+    shift
+    ;;
+  *)
+    if [[ -n ${provider:-} ]]; then
+      echo "ERROR: provider name was passed two times: '${provider}' and '$1'"
+      echo "Use --help for more info"
+      exit 1
+    fi
+    provider=$1
+    shift
+    ;;
+  esac
+done
+
+if [[ -z ${provider:-} ]]; then
+  echo "ERROR: No provider specified!"
+  echo
+  show_usage
+  exit 1
+fi
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+DEFAULT_NIX="$SCRIPT_DIR/default.nix"
+repo_root=$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel)
+
+provider="$(echo "$provider" | tr '[:upper:]' '[:lower:]')"
+
+echo_provider() { echo "== terraform-providers.${provider}: $* =="; }
+
+is_stable_version() { [[ $1 =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; }
+
+# marshallford_pfsense -> https://registry.terraform.io/v1/providers/marshallford/pfsense
+registry_url="https://registry.terraform.io/v1/providers/${provider//_//}"
+
+old_rev=$(grep -A 10 "${provider} = mkProvider" "$DEFAULT_NIX" | grep 'rev = ' | sed 's/.*rev = "\(.*\)";.*/\1/' || true)
+if [[ -z ${old_rev:-} ]]; then
+  echo "ERROR: terraform-providers.${provider}: not found in $DEFAULT_NIX"
+  exit 1
+fi
+
+echo_provider "current rev: ${old_rev}"
+echo_provider "querying registry"
+registry_response=$(curl -s "$registry_url")
+
+if is_stable_version "$old_rev"; then
+  latest=$(jq -r '.versions | map(select(test("^[0-9]+\\.[0-9]+\\.[0-9]+$"))) | last' <<< "$registry_response")
+else
+  latest=$(jq -r '.version' <<< "$registry_response")
+fi
+
+version_response=$(curl -s "$registry_url/$latest")
+rev=$(jq -r '.tag' <<< "$version_response")
+
+if [[ ${force:-} != 1 ]] && [[ $old_rev == "$rev" ]]; then
+  echo_provider "already at ${rev}"
+  exit
+fi
+
+if [[ ${rev//v/} =~ [[:alpha:]] ]]; then
+  echo_provider "not updating to unstable version ${rev}"
+  exit
+fi
+
+echo_provider "updating ${old_rev} -> ${rev}"
+
+owner_repo=$(jq -r '.source' <<< "$version_response" | sed 's|https://github.com/||')
+echo_provider "computing hash for ${owner_repo}@${rev}"
+new_hash=$(nurl "https://github.com/${owner_repo}" "$rev")
+
+old_hash=$(grep -A 10 "${provider} = mkProvider" "$DEFAULT_NIX" | grep 'hash = ' | sed 's/.*hash = "\(.*\)";.*/\1/' || true)
+if [[ -z ${old_hash:-} ]]; then
+  echo_provider "ERROR: could not extract hash from $DEFAULT_NIX"
+  exit 1
+fi
+
+# TODO: scope substitutions to the target provider's mkProvider block so that
+# two providers at the same rev tag don't clobber each other.
+sed -i "s|${old_rev}|${rev}|g" "$DEFAULT_NIX"
+sed -i "s|${old_hash}|${new_hash}|g" "$DEFAULT_NIX"
+echo_provider "patched $DEFAULT_NIX"
+
+# Regenerate gomod2nix.toml — derive path from provider name convention
+provider_part="${provider#*_}"
+toml_path="$repo_root/packages/terraform-provider-${provider_part}/gomod2nix.toml"
+
+if [[ -f "$toml_path" ]]; then
+  echo_provider "regenerating gomod2nix.toml"
+  system=$(nix eval --impure --expr 'builtins.currentSystem' --raw)
+  update_deps=$(nix build "${repo_root}#legacyPackages.${system}.terraform-providers.${provider}.update-deps" --no-link --print-out-paths)
+  "$update_deps/bin/update-deps" "$toml_path"
+else
+  echo_provider "WARNING: no gomod2nix.toml found at $toml_path — skipping regeneration"
+fi
+
+if [[ $build == 1 ]]; then
+  echo_provider "building"
+  system=${system:-$(nix eval --impure --expr 'builtins.currentSystem' --raw)}
+  nix build "${repo_root}#legacyPackages.${system}.terraform-providers.${provider}"
+fi
