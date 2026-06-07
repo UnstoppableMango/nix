@@ -4,21 +4,39 @@ let
   mkKubeVip = pkgs: pkgs.callPackage ./kube-vip { };
   mkUpjet = pkgs: pkgs.callPackage ./upjet { };
 
-  mkLib = pkgs: pkgs.lib.extend (_: prev: {
-    buf = mkBuf pkgs;
-    go = mkGo pkgs;
-    kubeVip = mkKubeVip pkgs;
-    upjet = mkUpjet pkgs;
-    maintainers = prev.maintainers // (import ./maintainers.nix);
-  });
+  mkLib =
+    pkgs:
+    pkgs.lib.extend (
+      _: prev: {
+        buf = mkBuf pkgs;
+        go = mkGo pkgs;
+        kubeVip = mkKubeVip pkgs;
+        upjet = mkUpjet pkgs;
+        maintainers = prev.maintainers // (import ./maintainers.nix);
+      }
+    );
 in
 {
-  flake = { inherit mkLib mkBuf mkGo mkKubeVip mkUpjet; };
+  flake = {
+    inherit
+      mkLib
+      mkBuf
+      mkGo
+      mkKubeVip
+      mkUpjet
+      ;
+  };
 
   perSystem =
-    { pkgs, ... }:
+    { pkgs, self', ... }:
     let
-      lib = mkLib pkgs;
+      lib = mkLib (
+        pkgs.extend (
+          _: _: {
+            inherit (self'.packages) kube-vip;
+          }
+        )
+      );
     in
     {
       legacyPackages = {
