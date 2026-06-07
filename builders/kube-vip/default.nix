@@ -1,15 +1,23 @@
+{ self, ... }:
 {
-  perSystem =
-    { self', pkgs, ... }:
+  flake.lib.kubeVipTools =
+    { pkgs, kube-vip }:
     let
       callPackage = pkgs.lib.callPackageWith (kubeVipTools // pkgs);
 
       kubeVipTools = {
-        inherit (self'.legacyPackages) kube-vip;
+        inherit kube-vip;
         manifestPod = callPackage ./manifest-pod.nix;
       };
     in
+    kubeVipTools;
+
+  perSystem =
+    { self', pkgs, ... }:
     {
-      legacyPackages = { inherit kubeVipTools; };
+      legacyPackages.kubeVipTools = self.lib.kubeVipTools {
+        inherit pkgs;
+        kube-vip = self'.legacyPackages.kube-vip;
+      };
     };
 }

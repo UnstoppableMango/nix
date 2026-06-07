@@ -1,16 +1,21 @@
+{ self, ... }:
 {
-  perSystem =
-    { inputs', pkgs, ... }:
+  flake.lib.mangoTools =
+    { pkgs }:
     let
       callPackage = pkgs.lib.callPackageWith (packages // pkgs);
 
       packages = {
-        inherit (inputs'.gomod2nix.legacyPackages) buildGoApplication gomod2nix;
+        inherit (pkgs) buildGoApplication gomod2nix;
         mkUpdateDeps = src: callPackage ./update-deps.nix { inherit src; };
         modInit = src: modulePath: callPackage ./mod-init.nix { inherit src modulePath; };
       };
     in
+    packages;
+
+  perSystem =
+    { pkgs, ... }:
     {
-      legacyPackages.mangoTools = packages;
+      legacyPackages.mangoTools = self.lib.mangoTools { inherit pkgs; };
     };
 }

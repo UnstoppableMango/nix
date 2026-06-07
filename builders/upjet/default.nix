@@ -1,23 +1,25 @@
+{ self, ... }:
 {
-  perSystem =
-    {
-      inputs',
-      self',
-      pkgs,
-      ...
-    }:
+  flake.lib.upjetTools =
+    { pkgs, mangoTools }:
     let
       callPackage = pkgs.lib.callPackageWith (packages // pkgs);
 
       packages = {
-        inherit (self'.legacyPackages) mangoTools;
-        inherit (inputs'.gomod2nix.legacyPackages) buildGoApplication;
-
+        inherit mangoTools;
+        buildGoApplication = pkgs.buildGoApplication;
         buildProviderRepo = callPackage ./provider-repo.nix;
         buildProvider = callPackage ./provider.nix;
       };
     in
+    packages;
+
+  perSystem =
+    { self', pkgs, ... }:
     {
-      legacyPackages.upjetTools = packages;
+      legacyPackages.upjetTools = self.lib.upjetTools {
+        inherit pkgs;
+        mangoTools = self'.legacyPackages.mangoTools;
+      };
     };
 }

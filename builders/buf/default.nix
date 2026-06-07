@@ -1,6 +1,7 @@
+{ self, ... }:
 {
-  perSystem =
-    { pkgs, ... }:
+  flake.lib.bufTools =
+    { pkgs }:
     let
       callPackage = pkgs.lib.callPackageWith (packages // pkgs);
 
@@ -11,7 +12,11 @@
         generate = callPackage ./generate.nix;
       };
     in
+    packages;
+
+  perSystem =
+    { pkgs, ... }:
     {
-      legacyPackages.bufTools = packages;
+      legacyPackages.bufTools = self.lib.bufTools { inherit pkgs; };
     };
 }
