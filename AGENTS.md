@@ -9,7 +9,7 @@ Personal Nix flake repository that aggregates various Nix packages and tools. Us
 ## Commands
 
 ```bash
-nix develop          # Enter dev shell (provides: gomod2nix, nil, nixfmt, nurl, watchexec)
+nix develop          # Enter dev shell (provides: gomod2nix, nil, nixfmt, nix-update, nurl, watchexec)
 nix fmt              # Format all Nix files with nixfmt
 nix flake check      # Validate flake and build all outputs
 nix flake check --all-systems  # Check across all supported systems (also: make check)
@@ -17,6 +17,7 @@ nix build .#<name>   # Build a specific package
 make build           # Build all Go packages
 make update          # Update flake.lock (nix flake update)
 make deps            # Regenerate all dependency files (gomod2nix.toml, deps.json, manifest.json)
+make update-provider/<name>  # Update a specific terraform provider
 ```
 
 To regenerate `gomod2nix.toml` for a Go package (e.g., after version bump):
@@ -33,22 +34,22 @@ This uses a nix-built `update-deps` script to fetch the upstream `go.mod` and ru
 - `./builders` — reusable builder functions (bufTools, mangoTools, kubeVipTools, upjetTools)
 - `./pkgs` — all package definitions
 
-`pkgs/default.nix` aggregates submodules (`go.nix`, `dotnet.nix`, `upjet.nix`, `./apis`, `./kube-vip`, `./images`). New packages are added to the appropriate submodule in `pkgs/`, not directly to `flake.nix`.
+`pkgs/default.nix` defines all packages directly and imports submodules (`./apis`, `./kube-vip`, `./images`). New packages are added here or to the appropriate submodule, not directly to `flake.nix`.
 
 A subset of packages is exposed via `overlayAttrs` so other flakes can consume them as an overlay:
 awxkit, chart-releaser, kubectl-get-all, kubectl-get-resources, kubectl-slice, mmake, openshift-installer.
 
 ### Packages
 
-**Go packages** (`pkgs/go.nix` and `pkgs/kube-vip/`): chart-releaser, kube-vip, kubectl-get-all, kubectl-get-resources, kubectl-slice, mmake, openshift-installer, smarter-device-manager, upjet-provider-cloudflare. All use `buildGoApplication` from gomod2nix and require a `gomod2nix.toml`.
+**Go packages** (`pkgs/default.nix` and `pkgs/kube-vip/`): chart-releaser, kube-vip, kubectl-get-all, kubectl-get-resources, kubectl-slice, mmake, openshift-installer, smarter-device-manager, terraform-plugin-codegen-openapi, terraform-provider-pfsense, upjet-provider-cloudflare. All use `buildGoApplication` from gomod2nix and require a `gomod2nix.toml`.
 
-**Dotnet packages** (`pkgs/dotnet.nix`): aspire-cli. Uses `buildDotnetModule`; deps regenerated via `make pkgs/aspire-cli/deps.json` (runs the package's nix-built `fetch-deps` script).
+**Dotnet packages** (`pkgs/aspire-cli/`): aspire-cli. Uses `buildDotnetModule`; deps regenerated via `make pkgs/aspire-cli/deps.json` (runs the package's nix-built `fetch-deps` script).
 
 **Python packages** (`pkgs/default.nix`): awxkit.
 
 **Other packages** (`pkgs/default.nix`): omnissa-horizon-client (unfree VMware Horizon client).
 
-**Upjet providers** (`pkgs/upjet.nix`): upjet-provider-cloudflare. Uses a custom upjet builder.
+**Upjet providers** (`pkgs/upjet-provider-cloudflare/`): upjet-provider-cloudflare. Uses a custom upjet builder.
 
 **Container images** (`pkgs/images/`): github-runner, hercules-ci-agent. Use nix2container; manifests regenerated via `make pkgs/images/<name>/manifest.json`.
 
