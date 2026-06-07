@@ -39,7 +39,7 @@
         flake-parts.flakeModules.easyOverlay
 
         ./builders
-        ./packages
+        ./pkgs
       ];
 
       flake.templates = {

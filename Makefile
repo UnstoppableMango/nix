@@ -7,30 +7,30 @@ check:
 	nix flake check
 
 build: ${GO_PKGS}
-${GO_PKGS}: %: packages/%/gomod2nix.toml
+${GO_PKGS}: %: pkgs/%/gomod2nix.toml
 	nix build .#$*
 
 update:
 	nix flake update
 
 update-provider/%:
-	packages/terraform-providers/update-provider $*
+	pkgs/terraform-providers/update-provider $*
 
-deps: ${CS_PKGS:%=packages/%/deps.json} ${GO_PKGS:%=packages/%/gomod2nix.toml} ${IMAGES:%=packages/images/%/manifest.json}
+deps: ${CS_PKGS:%=pkgs/%/deps.json} ${GO_PKGS:%=pkgs/%/gomod2nix.toml} ${IMAGES:%=pkgs/images/%/manifest.json}
 
-packages/%/deps.json: packages/%/default.nix
+pkgs/%/deps.json: pkgs/%/default.nix
 	"$$(nix build .#$*.fetch-deps --print-out-paths)" ${CURDIR}/$@
 
-packages/%/gomod2nix.toml: packages/%/default.nix
+pkgs/%/gomod2nix.toml: pkgs/%/default.nix
 	"$$(nix build .#$*.update-deps --print-out-paths)/bin/update-deps" ${CURDIR}/$@
 
-packages/%/update: packages/%/default.nix
+pkgs/%/update: pkgs/%/default.nix
 	nix-update --flake $*
 
-packages/%/gomod.patch: packages/%/default.nix
+pkgs/%/gomod.patch: pkgs/%/default.nix
 	"$$(nix build .#$*.go-mod-patch --print-out-paths)/bin/go-mod-init" >${CURDIR}/$@
 
-packages/images/%/manifest.json: packages/images/%/default.nix
+pkgs/images/%/manifest.json: pkgs/images/%/default.nix
 	nix run .#images.$*.fromImage.getManifest > $@
 
 .vscode/settings.json: hack/vscode.json

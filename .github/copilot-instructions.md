@@ -14,7 +14,7 @@ This is a Nix flake repository that aggregates various Nix packages and tools. I
 ## Project Structure
 
 - `flake.nix`: Main flake configuration with system-wide settings
-- `packages/`: Individual package definitions (aspire-cli, chart-releaser, kubectl-get-all, kubectl-get-resources, mmake, openshift-installer)
+- `pkgs/`: Individual package definitions (aspire-cli, chart-releaser, kubectl-get-all, kubectl-get-resources, mmake, openshift-installer)
 - Each package has its own module imported into the main flake
 
 ## Development Guidelines
@@ -26,17 +26,17 @@ This is a Nix flake repository that aggregates various Nix packages and tools. I
    - Use 2-space indentation
    
 2. **Flake Structure**: Follow the flake-parts modular pattern
-   - New packages should be added as separate modules in `packages/`
+   - New packages should be added as separate modules in `pkgs/`
    - Import new package modules in the main `flake.nix` imports list
 
 3. **Package Definitions**: 
-   - Each package should have its own directory under `packages/`
+   - Each package should have its own directory under `pkgs/`
    - Use appropriate fetchers (fetchFromGitHub, fetchurl, etc.)
    - Include proper meta information (description, license, maintainers)
 
 ### Common Tasks
 
-- **Add a new package**: Create a new directory under `packages/` with a `default.nix`, then add it to the imports in `flake.nix`
+- **Add a new package**: Create a new directory under `pkgs/` with a `default.nix`, then add it to the imports in `flake.nix`
 - **Update dependencies**: Run `nix flake update` to update `flake.lock`
 - **Test builds**: Use `nix build .#package-name` to test individual packages
 - **Development shell**: Use `nix develop` to enter the dev environment with tools like gomod2nix, nil, nixfmt, and nurl
