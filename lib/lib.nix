@@ -1,12 +1,7 @@
-{ pkgs, lib }:
-let
-  callPackage = lib.callPackageWith (packages // pkgs);
-
-  packages = {
-    buf = callPackage ./buf { };
-    go = callPackage ./go { };
-    kubeVip = callPackage ./kube-vip { };
-    upjet = callPackage ./upjet { };
-  };
-in
-packages
+{ pkgs }:
+{
+  buf = pkgs.callPackage ./buf { };
+  go = pkgs.callPackage ./go { };
+  kubeVip = pkgs.callPackage ./kube-vip { };
+  upjet = pkgs.callPackage ./upjet { };
+}

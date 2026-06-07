@@ -1,13 +1,14 @@
-{ self, ... }:
+let
+  mkLib = pkgs: import ./lib.nix { inherit pkgs; };
+in
 {
-  flake.mkLib = import ./lib.nix;
+  flake = { inherit mkLib; };
 
   perSystem =
     { self', pkgs, ... }:
     let
-      lib = pkgs.lib.callPackageWith self.mkLib {
-        inherit (self'.legacyPackages) kube-vip mangoTools;
-        inherit pkgs;
+      lib = pkgs.callPackage mkLib {
+        inherit (self'.legacyPackages) lib kube-vip mangoTools;
       };
     in
     {
