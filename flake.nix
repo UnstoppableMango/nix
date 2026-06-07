@@ -38,7 +38,7 @@
         # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
         flake-parts.flakeModules.easyOverlay
 
-        ./builders
+        ./lib
         ./pkgs
       ];
 
