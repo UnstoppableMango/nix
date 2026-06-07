@@ -77,5 +77,5 @@ stdenvNoCC.mkDerivation {
     cp -r . $out
   '';
 
-  passthru.update-deps = mangoTools.updateDeps src;
+  passthru.update-deps = mangoTools.mkUpdateDeps src;
 }
