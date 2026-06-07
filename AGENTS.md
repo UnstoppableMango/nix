@@ -21,7 +21,7 @@ make deps            # Regenerate all dependency files (gomod2nix.toml, deps.jso
 
 To regenerate `gomod2nix.toml` for a Go package (e.g., after version bump):
 ```bash
-make packages/<name>/gomod2nix.toml
+make pkgs/<name>/gomod2nix.toml
 ```
 This uses a nix-built `update-deps` script to fetch the upstream `go.mod` and run `gomod2nix generate`.
 
@@ -31,28 +31,28 @@ This uses a nix-built `update-deps` script to fetch the upstream `go.mod` and ru
 
 `flake.nix` uses flake-parts and imports two top-level modules:
 - `./builders` — reusable builder functions (bufTools, mangoTools, kubeVipTools, upjetTools)
-- `./packages` — all package definitions
+- `./pkgs` — all package definitions
 
-`packages/default.nix` aggregates submodules (`go.nix`, `dotnet.nix`, `upjet.nix`, `./apis`, `./kube-vip`, `./images`). New packages are added to the appropriate submodule in `packages/`, not directly to `flake.nix`.
+`pkgs/default.nix` aggregates submodules (`go.nix`, `dotnet.nix`, `upjet.nix`, `./apis`, `./kube-vip`, `./images`). New packages are added to the appropriate submodule in `pkgs/`, not directly to `flake.nix`.
 
 A subset of packages is exposed via `overlayAttrs` so other flakes can consume them as an overlay:
 awxkit, chart-releaser, kubectl-get-all, kubectl-get-resources, kubectl-slice, mmake, openshift-installer.
 
 ### Packages
 
-**Go packages** (`packages/go.nix` and `packages/kube-vip/`): chart-releaser, kube-vip, kubectl-get-all, kubectl-get-resources, kubectl-slice, mmake, openshift-installer, smarter-device-manager, upjet-provider-cloudflare. All use `buildGoApplication` from gomod2nix and require a `gomod2nix.toml`.
+**Go packages** (`pkgs/go.nix` and `pkgs/kube-vip/`): chart-releaser, kube-vip, kubectl-get-all, kubectl-get-resources, kubectl-slice, mmake, openshift-installer, smarter-device-manager, upjet-provider-cloudflare. All use `buildGoApplication` from gomod2nix and require a `gomod2nix.toml`.
 
-**Dotnet packages** (`packages/dotnet.nix`): aspire-cli. Uses `buildDotnetModule`; deps regenerated via `make packages/aspire-cli/deps.json` (runs the package's nix-built `fetch-deps` script).
+**Dotnet packages** (`pkgs/dotnet.nix`): aspire-cli. Uses `buildDotnetModule`; deps regenerated via `make pkgs/aspire-cli/deps.json` (runs the package's nix-built `fetch-deps` script).
 
-**Python packages** (`packages/default.nix`): awxkit.
+**Python packages** (`pkgs/default.nix`): awxkit.
 
-**Other packages** (`packages/default.nix`): omnissa-horizon-client (unfree VMware Horizon client).
+**Other packages** (`pkgs/default.nix`): omnissa-horizon-client (unfree VMware Horizon client).
 
-**Upjet providers** (`packages/upjet.nix`): upjet-provider-cloudflare. Uses a custom upjet builder.
+**Upjet providers** (`pkgs/upjet.nix`): upjet-provider-cloudflare. Uses a custom upjet builder.
 
-**Container images** (`packages/images/`): github-runner, hercules-ci-agent. Use nix2container; manifests regenerated via `make packages/images/<name>/manifest.json`.
+**Container images** (`pkgs/images/`): github-runner, hercules-ci-agent. Use nix2container; manifests regenerated via `make pkgs/images/<name>/manifest.json`.
 
-**Experimental** (`packages/apis/`): protobuf build helper (not yet exposed in overlayAttrs or CI).
+**Experimental** (`pkgs/apis/`): protobuf build helper (not yet exposed in overlayAttrs or CI).
 
 ### Builders
 
@@ -68,8 +68,8 @@ awxkit, chart-releaser, kubectl-get-all, kubectl-get-resources, kubectl-slice, m
 
 ## Adding a new package
 
-1. Create `packages/<name>/default.nix` following existing package patterns
-2. Add the package to the appropriate submodule in `packages/` (e.g., `go.nix` for Go packages, or `packages/default.nix` for one-offs)
+1. Create `pkgs/<name>/default.nix` following existing package patterns
+2. Add the package to the appropriate submodule in `pkgs/` (e.g., `go.nix` for Go packages, or `pkgs/default.nix` for one-offs)
 3. For Go packages: add `gomod2nix.toml` generation targets to the Makefile (add the package name to `GO_PKGS`)
 4. Optionally add to `overlayAttrs` in `flake.nix` for external consumption via overlay
 

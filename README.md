@@ -7,25 +7,25 @@ Feel free to consume, but this is primarily for personal use.
 
 Mini nixpkgs.
 
-- [awxkit](./packages/awxkit/default.nix)
-- [aspire-cli](./packages/aspire-cli/default.nix)
-- [chart-releaser](./packages/chart-releaser/default.nix)
-- [kube-vip](./packages/kube-vip/default.nix)
-- [kubectl-get-all](./packages/kubectl-get-all/default.nix)
-- [kubectl-get-resources](./packages/kubectl-get-resources/default.nix)
-- [mmake](./packages/mmake/default.nix)
-- [openshift-installer](./packages/openshift-installer/default.nix)
+- [awxkit](./pkgs/awxkit/default.nix)
+- [aspire-cli](./pkgs/aspire-cli/default.nix)
+- [chart-releaser](./pkgs/chart-releaser/default.nix)
+- [kube-vip](./pkgs/kube-vip/default.nix)
+- [kubectl-get-all](./pkgs/kubectl-get-all/default.nix)
+- [kubectl-get-resources](./pkgs/kubectl-get-resources/default.nix)
+- [mmake](./pkgs/mmake/default.nix)
+- [openshift-installer](./pkgs/openshift-installer/default.nix)
 
 ### OCI Images
 
-- [github-runner](./packages/images/github-runner.nix)
+- [github-runner](./pkgs/images/github-runner.nix)
 
 ### Experimental
 
-- [apis](./packages/apis/default.nix)
-- [omnissa-horizon-client](./packages/omnissa-horizon-client/default.nix)
-- [smarter-device-manager](./packages/smarter-device-manager/default.nix)
-- [upjet-provider-cloudflare](./packages/upjet-provider-cloudflare/default.nix)
+- [apis](./pkgs/apis/default.nix)
+- [omnissa-horizon-client](./pkgs/omnissa-horizon-client/default.nix)
+- [smarter-device-manager](./pkgs/smarter-device-manager/default.nix)
+- [upjet-provider-cloudflare](./pkgs/upjet-provider-cloudflare/default.nix)
 
 ## Builders
 

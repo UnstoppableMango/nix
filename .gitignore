@@ -3,6 +3,6 @@
 .vscode/*
 !.vscode/extensions.json
 /result
-packages/*/go.*
+pkgs/*/go.*
 .claude/*
 bin/
