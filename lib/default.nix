@@ -17,16 +17,6 @@ let
     );
 in
 {
-  flake = {
-    inherit
-      mkLib
-      mkBuf
-      mkGo
-      mkKubeVip
-      mkUpjet
-      ;
-  };
-
   perSystem =
     { pkgs, self', ... }:
     let
