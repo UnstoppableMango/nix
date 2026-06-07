@@ -47,6 +47,10 @@ jobs:
             type=ref,event=pr
             type=sha
 
+      - name: Fix registries.conf (v1 -> v2)
+        run: |
+          printf 'unqualified-search-registries = []\n' | sudo tee /etc/containers/registries.conf > /dev/null
+
       - run: |
           echo "${{ github.token }}" | skopeo login ghcr.io \
             --username ${{ github.actor }} \
