@@ -86,6 +86,8 @@
               kubectl-slice
               mmake
               openshift-installer
+              terraform-plugin-codegen-framework
+              terraform-plugin-codegen-openapi
               ;
           };
 

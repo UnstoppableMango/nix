@@ -30,6 +30,7 @@
         omnissa-horizon-client = callPackage ./omnissa-horizon-client { };
         openshift-installer = callPackage ./openshift-installer { };
         smarter-device-manager = callPackage ./smarter-device-manager { };
+        terraform-plugin-codegen-framework = callPackage ./terraform-plugin-codegen-framework { };
         terraform-plugin-codegen-openapi = callPackage ./terraform-plugin-codegen-openapi { };
         terraform-provider-pfsense = callPackage ./terraform-provider-pfsense { };
         terraform-providers = callPackage ./terraform-providers { };
@@ -49,6 +50,7 @@
           omnissa-horizon-client
           openshift-installer
           smarter-device-manager
+          terraform-plugin-codegen-framework
           terraform-plugin-codegen-openapi
           terraform-provider-pfsense
           upjet-provider-cloudflare
@@ -66,6 +68,7 @@
           omnissa-horizon-client
           openshift-installer
           smarter-device-manager
+          terraform-plugin-codegen-framework
           terraform-plugin-codegen-openapi
           terraform-providers
           upjet-provider-cloudflare
