@@ -31,7 +31,7 @@ This uses a nix-built `update-deps` script to fetch the upstream `go.mod` and ru
 ### Flake structure
 
 `flake.nix` uses flake-parts and imports two top-level modules:
-- `./builders` — reusable builder functions (bufTools, mangoTools, kubeVipTools, upjetTools)
+- `./lib` — library extensions (custom `lib.go` helpers, custom maintainers)
 - `./pkgs` — all package definitions
 
 `pkgs/default.nix` defines all packages directly and imports submodules (`./apis`, `./kube-vip`, `./images`). New packages are added here or to the appropriate submodule, not directly to `flake.nix`.
@@ -41,7 +41,7 @@ awxkit, chart-releaser, kubectl-get-all, kubectl-get-resources, kubectl-slice, m
 
 ### Packages
 
-**Go packages** (`pkgs/default.nix` and `pkgs/kube-vip/`): chart-releaser, kube-vip, kubectl-get-all, kubectl-get-resources, kubectl-slice, mmake, openshift-installer, smarter-device-manager, terraform-plugin-codegen-openapi, terraform-provider-pfsense, upjet-provider-cloudflare. All use `buildGoApplication` from gomod2nix and require a `gomod2nix.toml`.
+**Go packages** (`pkgs/default.nix` and `pkgs/kube-vip/`): chart-releaser, kube-vip, kubectl-get-all, kubectl-get-resources, kubectl-slice, mmake, openshift-installer, smarter-device-manager, terraform-plugin-codegen-openapi, terraform-provider-pfsense. All use `buildGoApplication` from gomod2nix and require a `gomod2nix.toml`.
 
 **Dotnet packages** (`pkgs/aspire-cli/`): aspire-cli. Uses `buildDotnetModule`; deps regenerated via `make pkgs/aspire-cli/deps.json` (runs the package's nix-built `fetch-deps` script).
 
@@ -49,19 +49,18 @@ awxkit, chart-releaser, kubectl-get-all, kubectl-get-resources, kubectl-slice, m
 
 **Other packages** (`pkgs/default.nix`): omnissa-horizon-client (unfree VMware Horizon client).
 
-**Upjet providers** (`pkgs/upjet-provider-cloudflare/`): upjet-provider-cloudflare. Uses a custom upjet builder.
+**Terraform provider collection** (`pkgs/terraform-providers/`): terraform-providers. Defines `mkProvider` (wraps `buildGoApplication` with standard provider install layout) and exposes named providers (e.g. `marshallford_pfsense`). Exposed via `legacyPackages` only, not `packages`. Update a provider with `make update-provider/<name>`.
 
 **Container images** (`pkgs/images/`): github-runner, hercules-ci-agent. Use nix2container; manifests regenerated via `make pkgs/images/<name>/manifest.json`.
 
 **Experimental** (`pkgs/apis/`): protobuf build helper (not yet exposed in overlayAttrs or CI).
 
-### Builders
+### Lib
 
-`builders/` is a flake-parts module that exposes reusable build toolkits:
-- **bufTools** (`builders/buf/`) — Protocol Buffer build/generate/convert helpers
-- **mangoTools** (`builders/go/`) — Go module init and dep-update helpers
-- **kubeVipTools** (`builders/kube-vip/`) — kube-vip manifest builders
-- **upjetTools** (`builders/upjet/`) — Upjet provider scaffolding
+`lib/` is a flake-parts module that extends `pkgs.lib` and exposes helpers via `legacyPackages`:
+- **`lib.go`** (`lib/go/`) — Go helpers: `mkUpdateDeps src` (generates `gomod2nix.toml`), `modInit src modulePath` (initializes a Go module and produces a patch)
+- **`lib.maintainers`** (`lib/maintainers.nix`) — custom maintainer entries merged into nixpkgs maintainers
+- **`mangoTools`** — alias for `lib.go`, available as `self'.legacyPackages.mangoTools` in perSystem modules
 
 ### Templates
 
@@ -70,8 +69,8 @@ awxkit, chart-releaser, kubectl-get-all, kubectl-get-resources, kubectl-slice, m
 ## Adding a new package
 
 1. Create `pkgs/<name>/default.nix` following existing package patterns
-2. Add the package to the appropriate submodule in `pkgs/` (e.g., `go.nix` for Go packages, or `pkgs/default.nix` for one-offs)
-3. For Go packages: add `gomod2nix.toml` generation targets to the Makefile (add the package name to `GO_PKGS`)
+2. Add the package to `pkgs/default.nix` (or the appropriate submodule for `./apis`, `./kube-vip`, `./images`)
+3. For Go packages: add the package name to `GO_PKGS` in the Makefile
 4. Optionally add to `overlayAttrs` in `flake.nix` for external consumption via overlay
 
 ## Key conventions
