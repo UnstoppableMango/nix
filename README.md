@@ -22,19 +22,14 @@ Mini nixpkgs.
 
 ### Experimental
 
-- [apis](./pkgs/apis/default.nix)
 - [omnissa-horizon-client](./pkgs/omnissa-horizon-client/default.nix)
 - [smarter-device-manager](./pkgs/smarter-device-manager/default.nix)
-- [upjet-provider-cloudflare](./pkgs/upjet-provider-cloudflare/default.nix)
 
 ## Builders
 
 Nix builder functions.
 
-- [buf](./builders/buf/default.nix) `bufTools`
 - [go](./builders/go/default.nix) `mangoTools`
-- [kube-vip](./builders/kube-vip/default.nix) `kubeVipTools`
-- [upjet](./builders/upjet/default.nix) `upjetTools`
 
 ## Usage
 

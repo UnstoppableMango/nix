@@ -2,70 +2,83 @@
 
 ## Repository Overview
 
-This is a Nix flake repository that aggregates various Nix packages and tools. It's primarily for personal use but available for public consumption.
+Personal Nix flake repository that aggregates various Nix packages and tools. Available for public consumption via overlay.
 
 ## Key Technologies
 
 - **Nix Flakes**: Modern Nix package management with `flake.nix` as the entry point
 - **flake-parts**: Modular flake configuration system
 - **gomod2nix**: Go modules to Nix expressions conversion
+- **nix2container**: Container image builds
 - **treefmt-nix**: Code formatting with nixfmt
 
 ## Project Structure
 
-- `flake.nix`: Main flake configuration with system-wide settings
-- `pkgs/`: Individual package definitions (aspire-cli, chart-releaser, kubectl-get-all, kubectl-get-resources, mmake, openshift-installer)
-- Each package has its own module imported into the main flake
+```
+flake.nix          # Main flake — imports ./lib and ./pkgs
+lib/               # Library extensions
+  default.nix      # Extends pkgs.lib with lib.go and lib.maintainers; exports mangoTools
+  go/              # Go helpers: mkUpdateDeps, modInit
+  maintainers.nix  # Custom maintainer entries
+pkgs/              # All package definitions
+  default.nix      # Defines most packages; imports ./kube-vip, ./images
+  aspire-cli/      # .NET CLI tool (buildDotnetModule)
+  images/          # Container images (github-runner, hercules-ci-agent)
+  kube-vip/        # kube-vip Go package
+  terraform-providers/  # mkProvider builder + named providers
+  <name>/          # Individual Go/Python/other packages
+templates/         # Starter flakes (default, go)
+```
+
+## Packages
+
+**Go** (use `buildGoApplication` from gomod2nix, require `gomod2nix.toml`):
+chart-releaser, kube-vip, kubectl-get-all, kubectl-get-resources, kubectl-slice, mmake, openshift-installer, smarter-device-manager, terraform-plugin-codegen-openapi, terraform-provider-pfsense
+
+**Dotnet**: aspire-cli (`buildDotnetModule`, deps in `pkgs/aspire-cli/deps.json`)
+
+**Python**: awxkit
+
+**Other**: omnissa-horizon-client (unfree)
+
+**Terraform provider collection** (`pkgs/terraform-providers/`): exposes `mkProvider` builder and named providers; in `legacyPackages` only
+
+**Container images** (`pkgs/images/`): github-runner, hercules-ci-agent (nix2container)
+
+**Overlay** (available to external flakes): awxkit, chart-releaser, kubectl-get-all, kubectl-get-resources, kubectl-slice, mmake, openshift-installer
 
 ## Development Guidelines
 
 ### Nix Code Style
 
-1. **Formatting**: Use `nixfmt` for all Nix files (configured via treefmt)
-   - Run `nix fmt` to format the entire project
-   - Use 2-space indentation
-   
-2. **Flake Structure**: Follow the flake-parts modular pattern
-   - New packages should be added as separate modules in `pkgs/`
-   - Import new package modules in the main `flake.nix` imports list
-
-3. **Package Definitions**: 
-   - Each package should have its own directory under `pkgs/`
-   - Use appropriate fetchers (fetchFromGitHub, fetchurl, etc.)
-   - Include proper meta information (description, license, maintainers)
+1. **Formatting**: Run `nix fmt` before committing (nixfmt via treefmt)
+2. **Flake structure**: Follow flake-parts modular pattern — new packages go in `pkgs/default.nix`, not directly in `flake.nix`
+3. **Package definitions**: Each package in its own directory under `pkgs/`; include meta (description, license, maintainers)
+4. **Avoid IFD** (Import From Derivation) for build reproducibility
+5. **Pin inputs**: Use `inputs.<input>.follows = "nixpkgs"` for transitive inputs
 
 ### Common Tasks
 
-- **Add a new package**: Create a new directory under `pkgs/` with a `default.nix`, then add it to the imports in `flake.nix`
-- **Update dependencies**: Run `nix flake update` to update `flake.lock`
-- **Test builds**: Use `nix build .#package-name` to test individual packages
-- **Development shell**: Use `nix develop` to enter the dev environment with tools like gomod2nix, nil, nixfmt, and nurl
+- **Add a package**: Create `pkgs/<name>/default.nix`, add to `pkgs/default.nix`, add name to `GO_PKGS` in Makefile for Go packages
+- **Update flake inputs**: `make update` (`nix flake update`)
+- **Regenerate Go deps**: `make pkgs/<name>/gomod2nix.toml`
+- **Regenerate all deps**: `make deps`
+- **Update a terraform provider**: `make update-provider/<name>`
+- **Build specific package**: `nix build .#<name>`
+- **Build all Go packages**: `make build`
+- **Validate**: `nix flake check`
+- **Dev shell**: `nix develop` (provides: gomod2nix, nil, nixfmt, nix-update, nurl, watchexec)
 
-### Best Practices
+### Lib module
 
-1. **Follow nixpkgs conventions**: When possible, mirror patterns from nixpkgs
-2. **Pin inputs**: Use `inputs.nixpkgs.follows = "nixpkgs"` for consistency
-3. **Overlay usage**: Add new packages to `overlayAttrs` for external consumption
-4. **System support**: Use the systems flake input to support multiple architectures
-5. **Build reproducibility**: Avoid IFD (Import From Derivation) when possible
-
-### Testing
-
-- Build all packages: `nix flake check`
-- Build specific package: `nix build .#package-name`
-- Test in isolation: Use `nix build` before committing
-
-## Tools and Commands
-
-- `nix develop`: Enter development shell
-- `nix fmt`: Format all Nix files
-- `nix flake check`: Validate flake and build outputs
-- `nix flake update`: Update all flake inputs
-- `gomod2nix`: Available as an app via `nix run .#gomod2nix`
+`lib/` extends `pkgs.lib` and exposes via `legacyPackages`:
+- `mangoTools.mkUpdateDeps src` — generates `gomod2nix.toml` from upstream source
+- `mangoTools.modInit src modulePath` — initializes a Go module and produces a patch
 
 ## Notes for AI Assistance
 
-- This is a personal aggregator repository, so changes should align with the maintainer's preferences
-- When suggesting new packages, provide complete Nix expressions following existing patterns
-- Always consider cross-platform compatibility (Linux, macOS, etc.)
-- Prefer pure Nix solutions over impure ones
+- New packages belong in `pkgs/default.nix`, not as new flake-parts imports in `flake.nix`
+- Go packages need `gomod2nix.toml`; regenerate with `make pkgs/<name>/gomod2nix.toml`
+- Follow nixpkgs meta conventions (description, homepage, license, maintainers)
+- Prefer pure Nix; avoid IFD
+- Consider cross-platform support (Linux, macOS, multiple architectures)
