@@ -1,6 +1,5 @@
 {
   imports = [
-    ./apis
     ./kube-vip
     ./images
   ];

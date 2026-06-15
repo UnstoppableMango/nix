@@ -21,7 +21,7 @@ lib/               # Library extensions
   go/              # Go helpers: mkUpdateDeps, modInit
   maintainers.nix  # Custom maintainer entries
 pkgs/              # All package definitions
-  default.nix      # Defines most packages; imports ./apis, ./kube-vip, ./images
+  default.nix      # Defines most packages; imports ./kube-vip, ./images
   aspire-cli/      # .NET CLI tool (buildDotnetModule)
   images/          # Container images (github-runner, hercules-ci-agent)
   kube-vip/        # kube-vip Go package

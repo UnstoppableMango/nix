@@ -34,7 +34,7 @@ This uses a nix-built `update-deps` script to fetch the upstream `go.mod` and ru
 - `./lib` — library extensions (custom `lib.go` helpers, custom maintainers)
 - `./pkgs` — all package definitions
 
-`pkgs/default.nix` defines all packages directly and imports submodules (`./apis`, `./kube-vip`, `./images`). New packages are added here or to the appropriate submodule, not directly to `flake.nix`.
+`pkgs/default.nix` defines all packages directly and imports submodules (`./kube-vip`, `./images`). New packages are added here or to the appropriate submodule, not directly to `flake.nix`.
 
 A subset of packages is exposed via `overlayAttrs` so other flakes can consume them as an overlay:
 awxkit, chart-releaser, kubectl-get-all, kubectl-get-resources, kubectl-slice, mmake, openshift-installer.
@@ -53,8 +53,6 @@ awxkit, chart-releaser, kubectl-get-all, kubectl-get-resources, kubectl-slice, m
 
 **Container images** (`pkgs/images/`): github-runner, hercules-ci-agent. Use nix2container; manifests regenerated via `make pkgs/images/<name>/manifest.json`.
 
-**Experimental** (`pkgs/apis/`): protobuf build helper (not yet exposed in overlayAttrs or CI).
-
 ### Lib
 
 `lib/` is a flake-parts module that extends `pkgs.lib` and exposes helpers via `legacyPackages`:
@@ -69,7 +67,7 @@ awxkit, chart-releaser, kubectl-get-all, kubectl-get-resources, kubectl-slice, m
 ## Adding a new package
 
 1. Create `pkgs/<name>/default.nix` following existing package patterns
-2. Add the package to `pkgs/default.nix` (or the appropriate submodule for `./apis`, `./kube-vip`, `./images`)
+2. Add the package to `pkgs/default.nix` (or the appropriate submodule for `./kube-vip`, `./images`)
 3. For Go packages: add the package name to `GO_PKGS` in the Makefile
 4. Optionally add to `overlayAttrs` in `flake.nix` for external consumption via overlay
 

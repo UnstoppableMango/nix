@@ -22,7 +22,6 @@ Mini nixpkgs.
 
 ### Experimental
 
-- [apis](./pkgs/apis/default.nix)
 - [omnissa-horizon-client](./pkgs/omnissa-horizon-client/default.nix)
 - [smarter-device-manager](./pkgs/smarter-device-manager/default.nix)
 
