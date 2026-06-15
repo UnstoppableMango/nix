@@ -17,7 +17,7 @@
       callPackage = lib.callPackageWith (packages // pkgs);
 
       packages = {
-        inherit (self'.legacyPackages) mangoTools upjetTools;
+        inherit (self'.legacyPackages) mangoTools;
         inherit (inputs'.gomod2nix.legacyPackages) buildGoApplication;
 
         aspire-cli = callPackage ./aspire-cli { };
@@ -34,7 +34,6 @@
         terraform-plugin-codegen-openapi = callPackage ./terraform-plugin-codegen-openapi { };
         terraform-provider-pfsense = callPackage ./terraform-provider-pfsense { };
         terraform-providers = callPackage ./terraform-providers { };
-        upjet-provider-cloudflare = callPackage ./upjet-provider-cloudflare { };
       };
     in
     {
@@ -53,7 +52,6 @@
           terraform-plugin-codegen-framework
           terraform-plugin-codegen-openapi
           terraform-provider-pfsense
-          upjet-provider-cloudflare
           ;
       };
 
@@ -71,7 +69,6 @@
           terraform-plugin-codegen-framework
           terraform-plugin-codegen-openapi
           terraform-providers
-          upjet-provider-cloudflare
           ;
       };
     };
