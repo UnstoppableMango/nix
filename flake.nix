@@ -51,6 +51,10 @@
           path = ./templates/go;
           description = "Go flake with nix-systems, flake-parts, treefmt-nix, and gomod2nix";
         };
+        ocaml = {
+          path = ./templates/ocaml;
+          description = "OCaml flake with nix-systems, flake-parts, treefmt-nix, and dune";
+        };
       };
 
       perSystem =
