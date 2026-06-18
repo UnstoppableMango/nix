@@ -27,12 +27,13 @@
         let
           inherit (pkgs) ocamlPackages;
           version = "0.0.1";
+          package = ocamlPackages.callPackage ./nix { inherit version; };
         in
         {
-          packages.default = ocamlPackages.callPackage ./nix { inherit version; };
+          packages.default = package;
 
           devShells.default = pkgs.mkShell {
-            inputsFrom = [ ocamlPackages.ocaml ];
+            inputsFrom = [ package ];
             packages =
               (with pkgs; [
                 gnumake

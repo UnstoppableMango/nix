@@ -5,7 +5,7 @@
 }:
 
 buildDunePackage {
-  pname = "";
+  pname = "my-ocaml-project";
   inherit version;
 
   src = lib.cleanSource ../.;
