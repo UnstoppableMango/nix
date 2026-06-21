@@ -12,11 +12,6 @@
       inputs.flake-utils.inputs.systems.follows = "systems";
     };
 
-    nix2container = {
-      url = "github:nlewo/nix2container";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nil = {
       url = "github:oxalica/nil";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -35,8 +30,6 @@
 
       imports = with inputs; [
         treefmt-nix.flakeModule
-        # https://flake.parts/overlays.html#an-overlay-for-free-with-flake-parts
-        flake-parts.flakeModules.easyOverlay
 
         ./lib
         ./pkgs
@@ -61,7 +54,6 @@
         {
           pkgs,
           system,
-          config,
           ...
         }:
         {
@@ -79,20 +71,6 @@
                 );
               })
             ];
-          };
-
-          overlayAttrs = {
-            inherit (config.packages)
-              awxkit
-              chart-releaser
-              kubectl-get-all
-              kubectl-get-resources
-              kubectl-slice
-              mmake
-              openshift-installer
-              terraform-plugin-codegen-framework
-              terraform-plugin-codegen-openapi
-              ;
           };
 
           devShells.default = pkgs.mkShellNoCC {

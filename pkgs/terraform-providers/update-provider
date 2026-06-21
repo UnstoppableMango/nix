@@ -119,9 +119,8 @@ sed -i "s|${old_rev}|${rev}|g" "$DEFAULT_NIX"
 sed -i "s|${old_hash}|${new_hash}|g" "$DEFAULT_NIX"
 echo_provider "patched $DEFAULT_NIX"
 
-# Regenerate gomod2nix.toml — derive path from provider name convention
-provider_part="${provider#*_}"
-toml_path="$repo_root/pkgs/terraform-provider-${provider_part}/gomod2nix.toml"
+# Regenerate gomod2nix.toml — stored under the provider name in this directory
+toml_path="$SCRIPT_DIR/${provider}/gomod2nix.toml"
 
 if [[ -f "$toml_path" ]]; then
   echo_provider "regenerating gomod2nix.toml"
