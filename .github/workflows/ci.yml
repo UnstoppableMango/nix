@@ -23,13 +23,4 @@ jobs:
 
       - run: nix flake check
 
-      - run: |
-          nix build \
-            .#awxkit \
-            .#chart-releaser \
-            .#kube-vip \
-            .#kubectl-get-all \
-            .#kubectl-get-resources \
-            .#kubectl-slice \
-            .#mmake \
-            .#openshift-installer
+      - run: nix build .#omnissa-horizon-client

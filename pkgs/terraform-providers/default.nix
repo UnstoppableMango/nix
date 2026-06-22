@@ -78,7 +78,7 @@ in
     repo = "terraform-provider-pfsense";
     rev = "v0.22.0";
     hash = "sha256-hGPq3m41DmfvpZgHSYVVH/vqhyU5WrgK3P4d6NBlU6k=";
-    modules = ../terraform-provider-pfsense/gomod2nix.toml;
+    modules = ./marshallford_pfsense/gomod2nix.toml;
     spdx = "MIT";
     homepage = "https://registry.terraform.io/providers/marshallford/pfsense";
   };

@@ -12,15 +12,9 @@ let
 in
 {
   perSystem =
-    { pkgs, self', ... }:
+    { pkgs, ... }:
     let
-      lib = mkLib (
-        pkgs.extend (
-          _: _: {
-            inherit (self'.packages) kube-vip terraform-plugin-codegen-openapi;
-          }
-        )
-      );
+      lib = mkLib pkgs;
     in
     {
       legacyPackages = {
