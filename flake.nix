@@ -12,11 +12,6 @@
       inputs.flake-utils.inputs.systems.follows = "systems";
     };
 
-    nil = {
-      url = "github:oxalica/nil";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -62,7 +57,6 @@
             config.allowUnfree = true;
             overlays = with inputs; [
               gomod2nix.overlays.default
-              nil.overlays.default
               (_: prev: {
                 lib = prev.lib.extend (
                   _: lprev: {
@@ -77,7 +71,6 @@
             packages = with pkgs; [
               bashInteractive
               gomod2nix
-              nil
               nix-update
               nixfmt
               nurl
