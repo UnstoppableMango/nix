@@ -43,6 +43,10 @@
           path = ./templates/ocaml;
           description = "OCaml flake with nix-systems, flake-parts, treefmt-nix, and dune";
         };
+        gossamer = {
+          path = ./templates/gossamer;
+          description = "Gossamer flake with nix-systems, flake-parts, treefmt-nix, and gos";
+        };
       };
 
       perSystem =

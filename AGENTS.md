@@ -62,7 +62,7 @@ awxkit, chart-releaser, kubectl-get-all, kubectl-get-resources, kubectl-slice, m
 
 ### Templates
 
-`templates/default/` and `templates/go/` provide starter flakes via `nix flake init -t github:UnstoppableMango/nix#<template>`.
+`templates/default/`, `templates/go/`, `templates/ocaml/`, and `templates/gossamer/` provide starter flakes via `nix flake init -t github:UnstoppableMango/nix#<template>`.
 
 ## Adding a new package
 
