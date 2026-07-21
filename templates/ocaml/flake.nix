@@ -41,7 +41,7 @@
               ])
               ++ (with ocamlPackages; [
                 dune_3
-                ocaml-lsp-server
+                ocaml-lsp
                 ocamlformat
                 odoc
               ]);

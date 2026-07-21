@@ -6,3 +6,4 @@
 pkgs/*/go.*
 .claude/*
 bin/
+!templates/ocaml/bin
