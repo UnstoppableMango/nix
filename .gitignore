@@ -1,0 +1,9 @@
+.direnv/
+.envrc
+.vscode/*
+!.vscode/extensions.json
+/result
+pkgs/*/go.*
+.claude/*
+bin/
+!templates/ocaml/bin
