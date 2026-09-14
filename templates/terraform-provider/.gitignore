@@ -1,5 +1,5 @@
 /result*
-.envrc
+*.local
 .direnv/
 bin/
 *.test
