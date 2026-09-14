@@ -1,6 +1,10 @@
 {
   description = "Random Nix crap";
 
+  nixConfig = {
+    allow-import-from-derivation = false;
+  };
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
     systems.url = "github:UnstoppableMango/nix-systems";
