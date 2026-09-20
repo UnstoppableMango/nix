@@ -14,8 +14,18 @@ OWNER=${OWNER:-example}
 # aside for the duration of the init and put back afterwards.
 OURS=(Makefile .gitignore .golangci.yml .editorconfig)
 
+restore() {
+  for f in "${OURS[@]}"; do
+    if [ -e "$f.template" ]; then mv -f "$f.template" "$f"; fi
+  done
+}
+
+# A failed init would otherwise leave the template holding Makefile.template
+# and friends.
+trap restore EXIT
+
 for f in "${OURS[@]}"; do
-  [ -e "$f" ] && mv "$f" "$f.template"
+  if [ -e "$f" ]; then mv "$f" "$f.template"; fi
 done
 
 kubebuilder init \
@@ -25,9 +35,8 @@ kubebuilder init \
   --plugins go/v4 \
   --license apache2
 
-for f in "${OURS[@]}"; do
-  [ -e "$f.template" ] && mv -f "$f.template" "$f"
-done
+restore
+trap - EXIT
 
 # The manager image is built by nix/image.nix, and .github/workflows/ci.yml
 # already covers lint, test, and e2e through the dev shell.

@@ -69,23 +69,28 @@ KIND_CLUSTER ?= my-operator-e2e
 # export KUBECONFIG for the suite so it cannot reach a real cluster.
 E2E_KUBECONFIG ?= $(CURDIR)/bin/$(KIND_CLUSTER).kubeconfig
 
+define cleanup-e2e-cluster
+$(KIND) delete cluster --name $(KIND_CLUSTER); rm -f $(E2E_KUBECONFIG)
+endef
+
 .PHONY: setup-test-e2e
 setup-test-e2e: | bin ## Create the Kind cluster used for e2e tests if it does not exist.
-	@case "$$($(KIND) get clusters)" in \
-		*"$(KIND_CLUSTER)"*) echo "Kind cluster '$(KIND_CLUSTER)' already exists." ;; \
-		*) $(KIND) create cluster --name $(KIND_CLUSTER) --config hack/kind-config.yaml ;; \
-	esac
+	@if $(KIND) get clusters | grep -qxF '$(KIND_CLUSTER)'; then \
+		echo "Kind cluster '$(KIND_CLUSTER)' already exists."; \
+	else \
+		$(KIND) create cluster --name $(KIND_CLUSTER) --config hack/kind-config.yaml; \
+	fi
 	$(KIND) export kubeconfig --name $(KIND_CLUSTER) --kubeconfig $(E2E_KUBECONFIG)
 
 .PHONY: test-e2e
+# The cleanup runs from a trap so a failing suite still tears the cluster down.
 test-e2e: setup-test-e2e manifests generate vet ## Run the e2e tests against a Kind cluster.
+	trap '$(cleanup-e2e-cluster)' EXIT; \
 	KUBECONFIG=$(E2E_KUBECONFIG) KIND=$(KIND) KIND_CLUSTER=$(KIND_CLUSTER) $(GO) test -tags=e2e ./test/e2e/ -v -ginkgo.v
-	$(MAKE) cleanup-test-e2e
 
 .PHONY: cleanup-test-e2e
 cleanup-test-e2e: ## Tear down the Kind cluster used for e2e tests.
-	@$(KIND) delete cluster --name $(KIND_CLUSTER)
-	@rm -f $(E2E_KUBECONFIG)
+	@$(cleanup-e2e-cluster)
 
 ##@ Build
 

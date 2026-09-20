@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
 
+# install-nix-action uses GITHUB_TOKEN only to read repositories nix fetches.
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
