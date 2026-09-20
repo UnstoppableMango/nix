@@ -56,6 +56,10 @@
           path = ./templates/terraform-provider;
           description = "Terraform plugin framework provider with nix-systems, flake-parts, treefmt-nix, gomod2nix, goreleaser, and release-please";
         };
+        kubernetes-operator = {
+          path = ./templates/kubernetes-operator;
+          description = "Kubernetes operator with nix-systems, flake-parts, treefmt-nix, gomod2nix, kubepkgs, and kubebuilder";
+        };
       };
 
       perSystem =
