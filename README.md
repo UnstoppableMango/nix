@@ -1,5 +1,7 @@
 # Nix Crap
 
+[![Hercules CI](https://hercules-ci.com/api/v1/site/github/account/UnstoppableMango/project/nix/badge)](https://hercules-ci.com/github/UnstoppableMango/nix)
+
 Aggregator of Nix things.
 Feel free to consume, but this is primarily for personal use.
 
