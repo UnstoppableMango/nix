@@ -1,0 +1,36 @@
+package shop
+
+type Order: Entity {
+  id: OrderId
+  customer: Customer
+  items: [LineItem] where { length(1..) }
+  status: Status = Draft
+  total: Money
+}
+
+type Customer: Entity {
+  id: CustomerId
+  email: Email
+  name: string?
+}
+
+type LineItem {
+  sku: string
+  quantity: int
+  price: Money
+}
+
+type Money {
+  amount: decimal
+  currency: Currency
+}
+
+type OrderId: uuid
+type CustomerId: uuid
+type Email: string where { matches(/^[^@]+@[^@]+$/) }
+enum Currency { USD EUR GBP }
+enum Status { Draft Placed Shipped Cancelled }
+
+target typescript for shop {
+  out("../gen/ts")
+}

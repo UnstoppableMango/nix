@@ -52,6 +52,10 @@
           path = ./templates/gossamer;
           description = "Gossamer flake with nix-systems, flake-parts, treefmt-nix, and gos";
         };
+        tdl = {
+          path = ./templates/tdl;
+          description = "TDL flake with nix-systems, flake-parts, treefmt-nix, and the tdl flake module";
+        };
         terraform-provider = {
           path = ./templates/terraform-provider;
           description = "Terraform plugin framework provider with nix-systems, flake-parts, treefmt-nix, gomod2nix, goreleaser, and release-please";
