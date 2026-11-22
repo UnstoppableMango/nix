@@ -82,5 +82,6 @@ runCommand "ci-module" { } ''
   ${bare.apps.${system}.renovate-fixup.program}
   test -z "$(ls -A)"
   ${full.apps.${system}.renovate-fixup.program}
+  test -f fixed
   touch $out
 ''
