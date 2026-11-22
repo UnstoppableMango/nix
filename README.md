@@ -33,6 +33,32 @@ Nix builder functions.
 
 - [go](./builders/go/default.nix) `mangoTools`
 
+## CI
+
+`flakeModules.ci` gives a flake its Hercules CI jobs and the `renovate-fixup` app.
+
+```nix
+{
+  imports = [ inputs.mangonix.flakeModules.ci ];
+
+  ci = {
+    # Broken upstream: https://example.com/tracking-issue
+    exclude.packages = [ "broken" ];
+    # Built nightly, not on push.
+    nightly.packages = [ "slow" ];
+  };
+
+  perSystem =
+    { pkgs, ... }:
+    {
+      ci.fixup = {
+        runtimeInputs = [ pkgs.gnumake ];
+        steps = [ "make generate" ];
+      };
+    };
+}
+```
+
 ## Usage
 
 ```nix

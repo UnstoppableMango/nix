@@ -32,6 +32,7 @@
         treefmt-nix.flakeModule
 
         ./lib
+        ./modules
         ./pkgs
       ];
 
