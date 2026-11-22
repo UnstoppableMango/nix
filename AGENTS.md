@@ -30,8 +30,9 @@ This uses a nix-built `update-deps` script to fetch the upstream `go.mod` and ru
 
 ### Flake structure
 
-`flake.nix` uses flake-parts and imports two top-level modules:
+`flake.nix` uses flake-parts and imports three top-level modules:
 - `./lib` — library extensions (custom `lib.go` helpers, custom maintainers)
+- `./modules`: flake-parts modules exported for consumers, and their checks
 - `./pkgs` — all package definitions
 
 `pkgs/default.nix` defines all packages directly and imports submodules (`./kube-vip`, `./images`). New packages are added here or to the appropriate submodule, not directly to `flake.nix`.
@@ -59,6 +60,16 @@ awxkit, chart-releaser, kubectl-get-all, kubectl-get-resources, kubectl-slice, m
 - **`lib.go`** (`lib/go/`) — Go helpers: `mkUpdateDeps src` (generates `gomod2nix.toml`), `modInit src modulePath` (initializes a Go module and produces a patch)
 - **`lib.maintainers`** (`lib/maintainers.nix`) — custom maintainer entries merged into nixpkgs maintainers
 - **`mangoTools`** — alias for `lib.go`, available as `self'.legacyPackages.mangoTools` in perSystem modules
+
+### Flake modules
+
+`modules/ci/` is `flakeModules.ci`, which every Nix repo imports to join CI (see the Nix CI spec in UnstoppableMango/nixos `docs/nix-ci.md`).
+It sets `herculesCI`: `ciSystems` defaults to `x86_64-linux`, `onPush.default` builds checks and packages, and `onSchedule.nightly` (04:00 UTC) builds devShells and whatever `ci.nightly` moves off the default.
+`ci.exclude` drops outputs from every job.
+`perSystem.ci.fixup.steps` become `apps.<system>.renovate-fixup`, which does nothing when there are none.
+It declares `flake.herculesCI` as an attribute set because nix-systems' module also sets `ciSystems`, and flake-parts refuses two raw definitions of one output.
+Keep it free of anything repo-specific.
+`checks.ci-module` (`modules/ci/test.nix`) evaluates consumer flakes against it.
 
 ### Templates
 
