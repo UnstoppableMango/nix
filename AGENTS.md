@@ -32,7 +32,7 @@ This uses a nix-built `update-deps` script to fetch the upstream `go.mod` and ru
 
 `flake.nix` uses flake-parts and imports three top-level modules:
 - `./lib` — library extensions (custom `lib.go` helpers, custom maintainers)
-- `./modules` — flake-parts modules exported for consumers, and their checks
+- `./modules`: flake-parts modules exported for consumers, and their checks
 - `./pkgs` — all package definitions
 
 `pkgs/default.nix` defines all packages directly and imports submodules (`./kube-vip`, `./images`). New packages are added here or to the appropriate submodule, not directly to `flake.nix`.

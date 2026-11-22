@@ -9,21 +9,25 @@ let
   cfg = config.ci;
   forCiSystems = lib.genAttrs config.flake.herculesCI.ciSystems;
 
-  names = mkOption {
+  nameList = mkOption {
     type = types.listOf types.str;
     default = [ ];
   };
 
-  # Missing names are skipped, so a list can name what only some systems have.
-  pick = attrs: wanted: lib.filterAttrs (name: _: builtins.elem name wanted) attrs;
-  omit = attrs: unwanted: removeAttrs attrs unwanted;
+  outputs = type: system: removeAttrs (config.flake.${type}.${system} or { }) cfg.exclude.${type};
 
-  outputs = type: system: omit (config.flake.${type}.${system} or { }) (cfg.exclude.${type} or [ ]);
+  # Names missing on a system are skipped.
+  pick = attrs: wanted: lib.filterAttrs (name: _: builtins.elem name wanted) attrs;
+
+  job =
+    select:
+    lib.genAttrs [ "checks" "packages" ] (
+      type: forCiSystems (system: select (outputs type system) cfg.nightly.${type})
+    );
 in
 {
   options = {
-    # nix-systems sets herculesCI.ciSystems too, so this is an attribute set its
-    # keys merge into rather than a second raw definition.
+    # nix-systems also sets herculesCI.ciSystems.
     flake = mkOption {
       type = types.submoduleWith {
         modules = [
@@ -40,22 +44,22 @@ in
 
     ci = {
       exclude = {
-        checks = names // {
+        checks = nameList // {
           description = "Checks built by no job.";
         };
-        packages = names // {
+        packages = nameList // {
           description = "Packages built by no job, such as one broken upstream. Name its tracking issue in a comment.";
         };
-        devShells = names // {
+        devShells = nameList // {
           description = "devShells built by no job.";
         };
       };
 
       nightly = {
-        checks = names // {
+        checks = nameList // {
           description = "Checks moved from `onPush.default` to the nightly job.";
         };
-        packages = names // {
+        packages = nameList // {
           description = "Packages moved from `onPush.default` to the nightly job.";
         };
       };
@@ -82,19 +86,14 @@ in
     flake.herculesCI = {
       ciSystems = lib.mkDefault [ "x86_64-linux" ];
 
-      onPush.default.outputs = {
-        checks = forCiSystems (system: omit (outputs "checks" system) cfg.nightly.checks);
-        packages = forCiSystems (system: omit (outputs "packages" system) cfg.nightly.packages);
-      };
+      onPush.default.outputs = job removeAttrs;
 
       onSchedule.nightly = {
         when = {
           hour = [ 4 ];
           minute = 0;
         };
-        outputs = {
-          checks = forCiSystems (system: pick (outputs "checks" system) cfg.nightly.checks);
-          packages = forCiSystems (system: pick (outputs "packages" system) cfg.nightly.packages);
+        outputs = job pick // {
           devShells = forCiSystems (outputs "devShells");
         };
       };

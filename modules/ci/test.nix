@@ -27,8 +27,9 @@ let
         perSystem._module.args.pkgs = pkgs;
       };
 
-  # Imported beside nix-systems, which also sets ciSystems.
-  bare = consumer systems.flakeModule;
+  bare = consumer { };
+  # nix-systems also sets ciSystems.
+  beside = consumer systems.flakeModule;
 
   # ciSystems is the checking system, so the jobs can be read on any system.
   full = consumer {
@@ -59,6 +60,7 @@ let
   inherit (full.herculesCI) onPush onSchedule;
 in
 assert bare.herculesCI.ciSystems == [ "x86_64-linux" ];
+assert beside.herculesCI.ciSystems == [ "x86_64-linux" ];
 assert
   names onPush.default.outputs == {
     checks = [ "fmt" ];
