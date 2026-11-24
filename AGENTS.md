@@ -71,6 +71,12 @@ It declares `flake.herculesCI` as an attribute set because nix-systems' module a
 Keep it free of anything repo-specific.
 `checks.ci-module` (`modules/ci/test.nix`) evaluates consumer flakes against it.
 
+### CI health
+
+`.github/workflows/ci-health.yml` keeps the pinned "Nix CI health" issue here: a table of every public repo's open `ci-health` issue, written by the reusable workflow in unmango/ci, red repos first.
+It runs hourly, and pages through ntfy (the `NTFY_TOPIC` secret) once a day for each `main` that has been red for a whole day; Monday's run also comments a digest of slow, unknown and stale repos.
+The code is `.github/actions/ci-health/aggregate.mjs`, a dependency-free module run through `actions/github-script`; `checks.ci-health` runs its `node --test` suite and `tsc`.
+
 ### Templates
 
 `templates/default/`, `templates/go/`, `templates/ocaml/`, `templates/gossamer/`, `templates/terraform-provider/`, `templates/kubernetes-operator/`, and `templates/tdl/` provide starter flakes via `nix flake init -t github:UnstoppableMango/nix#<template>`.

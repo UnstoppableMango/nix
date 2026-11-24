@@ -70,10 +70,30 @@
       perSystem =
         {
           pkgs,
+          lib,
           system,
           ...
         }:
         {
+          checks.ci-health =
+            pkgs.runCommand "ci-health"
+              {
+                src = lib.fileset.toSource {
+                  root = ./.github/actions/ci-health;
+                  fileset = ./.github/actions/ci-health;
+                };
+                nativeBuildInputs = [
+                  pkgs.nodejs_24
+                  pkgs.typescript
+                ];
+              }
+              ''
+                cd $src
+                node --test aggregate.test.mjs
+                tsc -p jsconfig.json
+                touch $out
+              '';
+
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
             config.allowUnfree = true;
