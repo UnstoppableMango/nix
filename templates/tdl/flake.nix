@@ -15,6 +15,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    mangonix = {
+      url = "github:UnstoppableMango/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # The overlay builds tdl with nixpkgs' go_1_27. If this nixpkgs lacks the
     # Go version tdl needs, drop the follows and use tdl's packages instead.
     tdl = {
@@ -32,6 +37,7 @@
       systems = import inputs.systems;
 
       imports = with inputs; [
+        mangonix.flakeModules.ci
         systems.flakeModule
         treefmt-nix.flakeModule
         tdl.flakeModules.default
