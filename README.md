@@ -68,7 +68,7 @@ The design is the [Nix CI spec](https://github.com/UnstoppableMango/nixos/blob/m
    List the commands that refresh generated files after an update in `perSystem.ci.fixup.steps`.
 2. Add `.github/workflows/ci.yml` calling `unmango/ci`'s `nix-ci.yml`, pinned by commit, with a `required` job that needs every job that should block a merge.
    [unmango/ci's README](https://github.com/unmango/ci#nix-ciyml) has the file; `templates/default/.github/workflows/ci.yml` is a copy.
-3. Extend `github>UnstoppableMango/renovate-config:nix` after the default preset in `.github/renovate.json`, and `:nix-deploys` instead when `main` deploys.
+3. Extend `github>UnstoppableMango/renovate-config:nix` after the default preset in `.github/renovate.json`, and `:nix-deploys` after it when `main` deploys.
 4. Add the repo's ruleset with `required` as its only check: a `PublicRepo` with `requiredGate` in [unmango/scm](https://github.com/unmango/scm) for unmango, or an entry in [UnstoppableMango/vcs](https://github.com/UnstoppableMango/vcs) for UnstoppableMango.
 5. Set the `CACHIX_AUTH_TOKEN` secret, which only pushes to `main` use.
 

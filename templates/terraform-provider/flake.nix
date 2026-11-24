@@ -39,7 +39,12 @@
       ];
 
       perSystem =
-        { pkgs, system, ... }:
+        {
+          config,
+          pkgs,
+          system,
+          ...
+        }:
         let
           version = pkgs.lib.strings.trim (builtins.readFile ./VERSION);
         in
@@ -50,6 +55,8 @@
           };
 
           packages.default = pkgs.callPackage ./nix { inherit version; };
+          # The hosted job runs only nix flake check, so a fork PR builds the provider through this.
+          checks.default = config.packages.default;
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
