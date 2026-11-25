@@ -126,3 +126,18 @@ test("run opens and pins the issue, and comments the digest without paging", asy
   );
   assert.equal(github.calls[2][1].issue_number, 3);
 });
+
+test("run keeps paging after a delivery error", async () => {
+  const other = issue("o/b", { red: true, body: marker({ state: "red", red_since: "2026-11-20T09:00:00Z", p50: 400 }) });
+  const github = fakeApi({ found: [red, other], open: [{ number: 2, title: TITLE }] });
+  const warnings = [];
+  const posted = [];
+  const post = async (url, init) => {
+    posted.push(init.headers.Title);
+    if (posted.length === 1) throw new Error("offline");
+    return { ok: true, status: 200 };
+  };
+  await run({ github, core: { ...core, warning: (m) => warnings.push(m) }, inputs, post, now: () => new Date("2026-11-22T09:07:00Z") });
+  assert.equal(posted.length, 2);
+  assert.deepEqual(warnings, ["paging for o/a failed: offline"]);
+});

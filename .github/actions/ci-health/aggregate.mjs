@@ -179,12 +179,16 @@ export async function run({ github, core, inputs, post = fetch, now = () => new 
       core.warning(`${r.repo} has been red for ${days}d, but there is no ntfy topic to page`);
       continue;
     }
-    const res = await post(`${inputs["ntfy-url"]}/${inputs["ntfy-topic"]}`, {
-      method: "POST",
-      headers: { Title: `${r.repo}: main red for ${days}d`, Tags: "rotating_light", Click: r.url },
-      body: `main in ${r.repo} has been red since ${minute(/** @type {string} */ (r.redSince))}.`,
-    });
-    if (!res.ok) core.warning(`paging for ${r.repo} failed: ${res.status}`);
-    else core.info(`paged for ${r.repo}`);
+    try {
+      const res = await post(`${inputs["ntfy-url"]}/${inputs["ntfy-topic"]}`, {
+        method: "POST",
+        headers: { Title: `${r.repo}: main red for ${days}d`, Tags: "rotating_light", Click: r.url },
+        body: `main in ${r.repo} has been red since ${minute(/** @type {string} */ (r.redSince))}.`,
+      });
+      if (!res.ok) core.warning(`paging for ${r.repo} failed: ${res.status}`);
+      else core.info(`paged for ${r.repo}`);
+    } catch (/** @type {any} */ e) {
+      core.warning(`paging for ${r.repo} failed: ${e.message}`);
+    }
   }
 }
