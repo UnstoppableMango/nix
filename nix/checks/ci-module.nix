@@ -1,5 +1,6 @@
 {
   flake-parts,
+  hercules-ci-effects,
   systems,
   system,
   pkgs,
@@ -7,6 +8,7 @@
   runCommand,
   emptyFile,
   emptyDirectory,
+  writeText,
 }:
 let
   consumer =
@@ -21,7 +23,7 @@ let
       {
         systems = [ system ];
         imports = [
-          ../../modules/ci
+          (flake-parts.lib.importApply ../../modules/ci { inherit hercules-ci-effects; })
           module
         ];
         perSystem._module.args.pkgs = pkgs;
@@ -43,8 +45,8 @@ let
     perSystem = {
       packages = {
         app = emptyFile;
-        broken = emptyFile;
-        flaky = emptyFile;
+        broken = writeText "broken" "";
+        flaky = writeText "flaky" "";
       };
       checks.fmt = emptyFile;
       devShells.default = emptyDirectory;
@@ -76,7 +78,13 @@ assert
     checks = [ ];
     packages = [ "flaky" ];
     devShells = [ "default" ];
+    effects = [ "attic-push" ];
   };
+# The push carries the default and nightly outputs, not the excluded ones.
+assert
+  lib.hasInfix "flaky" onSchedule.nightly.outputs.effects.${system}.attic-push.effectScript
+  && !lib.hasInfix "broken" onSchedule.nightly.outputs.effects.${system}.attic-push.effectScript;
+assert !(consumer { ci.attic.enable = false; }).herculesCI.onSchedule.nightly.outputs ? effects;
 runCommand "ci-module" { } ''
   mkdir work && cd work
   ${bare.apps.${system}.renovate-fixup.program}
