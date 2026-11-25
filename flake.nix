@@ -33,6 +33,7 @@
 
         ./lib
         ./modules
+        ./nix/checks
         ./pkgs
       ];
 

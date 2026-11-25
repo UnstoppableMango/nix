@@ -30,9 +30,10 @@ This uses a nix-built `update-deps` script to fetch the upstream `go.mod` and ru
 
 ### Flake structure
 
-`flake.nix` uses flake-parts and imports three top-level modules:
+`flake.nix` uses flake-parts and imports four top-level modules:
 - `./lib` — library extensions (custom `lib.go` helpers, custom maintainers)
-- `./modules`: flake-parts modules exported for consumers, and their checks
+- `./modules`: flake-parts modules exported for consumers
+- `./nix/checks`: the flake's checks, one `<check>.nix` each
 - `./pkgs` — all package definitions
 
 `pkgs/default.nix` defines all packages directly and imports submodules (`./kube-vip`, `./images`). New packages are added here or to the appropriate submodule, not directly to `flake.nix`.
@@ -69,7 +70,13 @@ It sets `herculesCI`: `ciSystems` defaults to `x86_64-linux`, `onPush.default` b
 `perSystem.ci.fixup.steps` become `apps.<system>.renovate-fixup`, which does nothing when there are none.
 It declares `flake.herculesCI` as an attribute set because nix-systems' module also sets `ciSystems`, and flake-parts refuses two raw definitions of one output.
 Keep it free of anything repo-specific.
-`checks.ci-module` (`modules/ci/test.nix`) evaluates consumer flakes against it.
+`checks.ci-module` (`nix/checks/ci-module.nix`) evaluates consumer flakes against it.
+
+### CI health
+
+`.github/workflows/ci-health.yml` keeps the pinned "Nix CI health" issue here: a table of every public repo's open `ci-health` issue, written by the reusable workflow in unmango/ci, red repos first.
+It runs hourly, and pages through ntfy (the `NTFY_TOPIC` secret) once a day for each `main` that has been red for a whole day; Monday's run also comments a digest of slow, unknown and stale repos.
+The code is `.github/actions/ci-health/aggregate.mjs`, a dependency-free module run through `actions/github-script`; `checks.ci-health` runs its `node --test` suite and `tsc`.
 
 ### Templates
 

@@ -21,7 +21,7 @@ let
       {
         systems = [ system ];
         imports = [
-          ./.
+          ../../modules/ci
           module
         ];
         perSystem._module.args.pkgs = pkgs;
