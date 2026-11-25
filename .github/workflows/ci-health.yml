@@ -1,0 +1,30 @@
+name: Nix CI health
+
+on:
+  schedule:
+    - cron: "7 * * * *"
+    # Monday 8:37 AM in Chicago under CDT, 7:37 AM under CST.
+    - cron: "37 13 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # The weekly run only adds the digest, so a streak never pages twice in one hour.
+      - uses: ./.github/actions/ci-health
+        with:
+          digest: ${{ github.event.schedule == '37 13 * * 1' }}
+          page: ${{ github.event.schedule == '7 * * * *' }}
+          ntfy-topic: ${{ secrets.NTFY_TOPIC }}
