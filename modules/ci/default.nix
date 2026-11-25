@@ -1,7 +1,9 @@
+{ hercules-ci-effects }:
 {
   config,
   lib,
   flake-parts-lib,
+  withSystem,
   ...
 }:
 let
@@ -24,6 +26,31 @@ let
     lib.genAttrs [ "checks" "packages" ] (
       type: forCiSystems (system: select (outputs type system) cfg.nightly.${type})
     );
+
+  # Scheduled jobs run on the default branch only, the one branch the agent
+  # hands the `attic` secret to.
+  atticPush = forCiSystems (
+    system:
+    withSystem system (
+      { pkgs, ... }:
+      let
+        paths = lib.concatMap (type: lib.attrValues (outputs type system)) [
+          "checks"
+          "packages"
+        ];
+      in
+      {
+        attic-push = (hercules-ci-effects.lib.withPkgs pkgs).mkEffect {
+          secretsMap.attic = "attic";
+          inputs = [ pkgs.attic-client ];
+          effectScript = ''
+            attic login thecluster "$(readSecretString attic .endpoint)" "$(readSecretString attic .token)"
+            attic push "thecluster:$(readSecretString attic .cache)" ${lib.escapeShellArgs paths}
+          '';
+        };
+      }
+    )
+  );
 in
 {
   options = {
@@ -54,6 +81,10 @@ in
           description = "devShells built by no job.";
         };
       };
+
+      # Off until gaea's bare-metal agents, which lack the `attic` secret, stop
+      # taking tasks (UnstoppableMango/nixos#530).
+      attic.enable = lib.mkEnableOption "the nightly effect pushing every default and nightly check and package to attic";
 
       nightly = {
         checks = nameList // {
@@ -93,9 +124,12 @@ in
           hour = [ 4 ];
           minute = 0;
         };
-        outputs = job pick // {
-          devShells = forCiSystems (outputs "devShells");
-        };
+        outputs =
+          job pick
+          // {
+            devShells = forCiSystems (outputs "devShells");
+          }
+          // lib.optionalAttrs cfg.attic.enable { effects = atticPush; };
       };
     };
 
