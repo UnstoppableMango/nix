@@ -15,6 +15,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    mangonix = {
+      url = "github:UnstoppableMango/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     mangopkgs = {
       url = "github:unmango/pkgs";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -27,6 +32,7 @@
       systems = import inputs.systems;
 
       imports = with inputs; [
+        mangonix.flakeModules.ci
         systems.flakeModule or { }
         treefmt-nix.flakeModule
       ];

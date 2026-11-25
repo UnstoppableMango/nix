@@ -5,65 +5,71 @@ on:
     branches: [main]
   pull_request:
 
-# install-nix-action uses GITHUB_TOKEN only to read repositories nix fetches.
 permissions:
   contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - uses: cachix/install-nix-action@bb0495a1086c46893eee56f32fd192dfe4a15bb9 # v32.0.0
-        with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: DeterminateSystems/magic-nix-cache-action@84c0677f58dcedf3b91f8223ce36a9ea5b3c84b7 # v15
-
-      - run: nix flake check
-      - run: nix build .#
+  # Hercules CI builds Linux; the hosted jobs and the gate come from unmango/ci.
+  nix:
+    uses: unmango/ci/.github/workflows/nix-ci.yml@9a2a7f9018392f7e9413127df2b604519bbf5b5c
+    permissions:
+      checks: read
+      contents: read
+      pull-requests: write
+      statuses: read
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - uses: cachix/install-nix-action@bb0495a1086c46893eee56f32fd192dfe4a15bb9 # v32.0.0
         with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
 
-      - uses: DeterminateSystems/magic-nix-cache-action@84c0677f58dcedf3b91f8223ce36a9ea5b3c84b7 # v15
+      - uses: unmango/actions/setup-nix@e8bbcbd12a2c521c5cb36957c00a7a8f4fe2e766 # v2.0.0
+        with:
+          github_access_token: ${{ github.token }}
 
       - run: nix develop -c make lint-config lint
 
+  # envtest cannot run inside the nix build sandbox, so the suites run
+  # here rather than as part of `nix flake check`.
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - uses: cachix/install-nix-action@bb0495a1086c46893eee56f32fd192dfe4a15bb9 # v32.0.0
         with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
 
-      - uses: DeterminateSystems/magic-nix-cache-action@84c0677f58dcedf3b91f8223ce36a9ea5b3c84b7 # v15
+      - uses: unmango/actions/setup-nix@e8bbcbd12a2c521c5cb36957c00a7a8f4fe2e766 # v2.0.0
+        with:
+          github_access_token: ${{ github.token }}
 
-      # envtest cannot run inside the nix build sandbox, so the suites run
-      # here rather than as part of `nix flake check`.
       - run: nix develop -c make test
 
   test-e2e:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-      - uses: cachix/install-nix-action@bb0495a1086c46893eee56f32fd192dfe4a15bb9 # v32.0.0
         with:
-          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
 
-      - uses: DeterminateSystems/magic-nix-cache-action@84c0677f58dcedf3b91f8223ce36a9ea5b3c84b7 # v15
+      - uses: unmango/actions/setup-nix@e8bbcbd12a2c521c5cb36957c00a7a8f4fe2e766 # v2.0.0
+        with:
+          github_access_token: ${{ github.token }}
 
       - run: nix develop -c make test-e2e
 
       - if: always()
         run: nix develop -c make cleanup-test-e2e
+
+  required:
+    needs: [nix, lint, test, test-e2e]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: jq -e 'all(.[]; .result == "success" or .result == "skipped")' <<<"$NEEDS"

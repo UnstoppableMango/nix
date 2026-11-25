@@ -15,6 +15,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    mangonix = {
+      url = "github:UnstoppableMango/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     gomod2nix = {
       url = "github:nix-community/gomod2nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -28,12 +33,18 @@
       systems = import inputs.systems;
 
       imports = with inputs; [
+        mangonix.flakeModules.ci
         systems.flakeModule or { }
         treefmt-nix.flakeModule
       ];
 
       perSystem =
-        { pkgs, system, ... }:
+        {
+          config,
+          pkgs,
+          system,
+          ...
+        }:
         let
           version = pkgs.lib.strings.trim (builtins.readFile ./VERSION);
         in
@@ -44,6 +55,8 @@
           };
 
           packages.default = pkgs.callPackage ./nix { inherit version; };
+          # The hosted job runs only nix flake check, so a fork PR builds the provider through this.
+          checks.default = config.packages.default;
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
