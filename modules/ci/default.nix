@@ -82,11 +82,9 @@ in
         };
       };
 
-      attic.enable =
-        lib.mkEnableOption "the nightly effect pushing every default and nightly check and package to attic"
-        // {
-          default = true;
-        };
+      # Off until gaea's bare-metal agents, which lack the `attic` secret, stop
+      # taking tasks (UnstoppableMango/nixos#530).
+      attic.enable = lib.mkEnableOption "the nightly effect pushing every default and nightly check and package to attic";
 
       nightly = {
         checks = nameList // {

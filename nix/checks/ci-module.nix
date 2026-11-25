@@ -6,7 +6,6 @@
   pkgs,
   lib,
   runCommand,
-  emptyFile,
   emptyDirectory,
   writeText,
 }:
@@ -38,17 +37,18 @@ let
     flake.herculesCI.ciSystems = lib.mkForce [ system ];
 
     ci = {
+      attic.enable = true;
       exclude.packages = [ "broken" ];
       nightly.packages = [ "flaky" ];
     };
 
     perSystem = {
       packages = {
-        app = emptyFile;
+        app = writeText "app" "";
         broken = writeText "broken" "";
         flaky = writeText "flaky" "";
       };
-      checks.fmt = emptyFile;
+      checks.fmt = writeText "fmt" "";
       devShells.default = emptyDirectory;
 
       ci.fixup.steps = [
@@ -82,9 +82,16 @@ assert
   };
 # The push carries the default and nightly outputs, not the excluded ones.
 assert
-  lib.hasInfix "flaky" onSchedule.nightly.outputs.effects.${system}.attic-push.effectScript
-  && !lib.hasInfix "broken" onSchedule.nightly.outputs.effects.${system}.attic-push.effectScript;
-assert !(consumer { ci.attic.enable = false; }).herculesCI.onSchedule.nightly.outputs ? effects;
+  let
+    inherit (onSchedule.nightly.outputs.effects.${system}.attic-push) effectScript;
+  in
+  lib.all (name: lib.hasInfix "-${name}" effectScript) [
+    "app"
+    "fmt"
+    "flaky"
+  ]
+  && !lib.hasInfix "-broken" effectScript;
+assert !bare.herculesCI.onSchedule.nightly.outputs ? effects;
 runCommand "ci-module" { } ''
   mkdir work && cd work
   ${bare.apps.${system}.renovate-fixup.program}
