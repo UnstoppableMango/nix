@@ -69,7 +69,7 @@ It sets `herculesCI`: `ciSystems` defaults to `x86_64-linux`, `onPush.default` b
 `ci.exclude` drops outputs from every job.
 `perSystem.ci.fixup.steps` become `apps.<system>.renovate-fixup`, which does nothing when there are none.
 It declares `flake.herculesCI` as an attribute set because nix-systems' module also sets `ciSystems`, and flake-parts refuses two raw definitions of one output.
-Keep it free of anything repo-specific.
+Keep it free of anything repo-specific: `modules/default.nix` imports it into this flake too.
 `checks.ci-module` (`nix/checks/ci-module.nix`) evaluates consumer flakes against it.
 
 ### CI health
@@ -95,4 +95,4 @@ The code is `.github/actions/ci-health/aggregate.mjs`, a dependency-free module 
 - Follow nixpkgs conventions for package meta (description, homepage, license, maintainers)
 - Use `inputs.<input>.follows = "nixpkgs"` to pin transitive inputs
 - Avoid IFD (Import From Derivation) for build reproducibility
-- CI runs `nix flake check` and builds all packages except aspire-cli
+- CI is Hercules (`flakeModules.ci`'s jobs), gated by `unmango/ci`'s `nix-ci.yml` through the `required` job in `ci.yml`
