@@ -73,6 +73,7 @@ The design is the [Nix CI spec](https://github.com/UnstoppableMango/nixos/blob/m
 5. Set the `CACHIX_AUTH_TOKEN` secret, which only pushes to `main` use.
 
 Private repos, repos on other accounts, and repos without a flake skip Hercules: they pass `linux: true` to `nix-ci.yml`, and the hosted job builds Linux instead.
+A private repo also sets `ci.hercules.enable = false`, since Hercules builds any repo its GitHub App can see, and passes `cachix-push: false`, since the Cachix cache is public.
 
 ## Usage
 

@@ -29,6 +29,7 @@ let
       };
 
   bare = consumer { };
+  off = consumer { ci.hercules.enable = false; };
   # nix-systems also sets ciSystems.
   beside = consumer systems.flakeModule;
 
@@ -92,6 +93,9 @@ assert
   ]
   && !lib.hasInfix "-broken" effectScript;
 assert !bare.herculesCI.onSchedule.nightly.outputs ? effects;
+assert off.herculesCI.onPush == { };
+assert !off.herculesCI ? onSchedule;
+assert off.herculesCI.ciSystems == [ "x86_64-linux" ];
 runCommand "ci-module" { } ''
   mkdir work && cd work
   ${bare.apps.${system}.renovate-fixup.program}
