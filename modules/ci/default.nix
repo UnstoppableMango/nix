@@ -70,6 +70,14 @@ in
     };
 
     ci = {
+      # Without a `herculesCI` output Hercules builds a default job from the
+      # standard outputs, so off keeps the output and gives it no jobs.
+      hercules.enable = mkOption {
+        type = types.bool;
+        default = true;
+        description = "Whether Hercules CI gets jobs. Turn it off in a private repo, which Hercules charges for.";
+      };
+
       exclude = {
         checks = nameList // {
           description = "Checks built by no job.";
@@ -114,24 +122,26 @@ in
   };
 
   config = {
-    flake.herculesCI = {
-      ciSystems = lib.mkDefault [ "x86_64-linux" ];
+    flake.herculesCI = lib.mkMerge [
+      { ciSystems = lib.mkDefault [ "x86_64-linux" ]; }
+      (lib.mkIf (!cfg.hercules.enable) { onPush = { }; })
+      (lib.mkIf cfg.hercules.enable {
+        onPush.default.outputs = job removeAttrs;
 
-      onPush.default.outputs = job removeAttrs;
-
-      onSchedule.nightly = {
-        when = {
-          hour = [ 4 ];
-          minute = 0;
+        onSchedule.nightly = {
+          when = {
+            hour = [ 4 ];
+            minute = 0;
+          };
+          outputs =
+            job pick
+            // {
+              devShells = forCiSystems (outputs "devShells");
+            }
+            // lib.optionalAttrs cfg.attic.enable { effects = atticPush; };
         };
-        outputs =
-          job pick
-          // {
-            devShells = forCiSystems (outputs "devShells");
-          }
-          // lib.optionalAttrs cfg.attic.enable { effects = atticPush; };
-      };
-    };
+      })
+    ];
 
     perSystem =
       { config, pkgs, ... }:
